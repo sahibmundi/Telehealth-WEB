@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Activity } from "lucide-react";
+import { Menu, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
@@ -8,9 +8,7 @@ const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/services", label: "Services" },
-  { href: "/symptoms", label: "Symptoms" },
   { href: "/technology", label: "Technology" },
-  { href: "/faqs", label: "FAQs" },
   { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
 ];
@@ -22,9 +20,7 @@ export function Navbar() {
   const [patientId, setPatientId] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -33,31 +29,36 @@ export function Navbar() {
     setPatientId(localStorage.getItem("patientId"));
   }, [location]);
 
+  const isLight = !isScrolled && location === "/";
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-white/90 backdrop-blur-md shadow-sm" : "bg-transparent"
+        isScrolled ? "bg-white/95 backdrop-blur-md shadow-sm" : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
-            <Activity className="w-6 h-6" />
+      <div className="container mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-4">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2 group shrink-0">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-primary flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform">
+            <Activity className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
-          <span className="text-xl font-bold tracking-tight text-foreground">
+          <span className={`text-lg sm:text-xl font-bold tracking-tight ${isLight && !isScrolled ? "text-white" : "text-foreground"}`}>
             TelePhysio
           </span>
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-1">
+        <nav className="hidden lg:flex items-center gap-0.5">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors hover:bg-primary/10 hover:text-primary ${
+              className={`px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-primary/10 hover:text-primary ${
                 location === link.href
                   ? "text-primary bg-primary/5"
+                  : isLight && !isScrolled
+                  ? "text-white/90 hover:text-white hover:bg-white/10"
                   : "text-muted-foreground"
               }`}
             >
@@ -66,35 +67,51 @@ export function Navbar() {
           ))}
         </nav>
 
-        <div className="hidden lg:flex items-center gap-4">
+        {/* Desktop CTA */}
+        <div className="hidden lg:flex items-center gap-3 shrink-0">
           {patientId ? (
-            <Link href="/dashboard" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2 bg-primary text-primary-foreground shadow hover:bg-primary/90">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 py-2 bg-primary text-primary-foreground shadow hover:bg-primary/90 transition-colors"
+            >
               Dashboard
             </Link>
           ) : (
-            <>
-              <Link href="/register" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-9 px-4 py-2 bg-primary text-primary-foreground shadow hover:bg-primary/90">
-                Book Appointment
-              </Link>
-            </>
+            <Link
+              href="/register"
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-4 py-2 bg-primary text-primary-foreground shadow hover:bg-primary/90 transition-colors"
+            >
+              Book Appointment
+            </Link>
           )}
         </div>
 
-        {/* Mobile Nav */}
+        {/* Mobile Hamburger */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild className="lg:hidden">
-            <Button variant="ghost" size="icon" aria-label="Menu">
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Open menu"
+              className={isLight && !isScrolled ? "text-white hover:bg-white/10" : ""}
+            >
               <Menu className="h-6 w-6" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-[300px] flex flex-col pt-16">
-            <nav className="flex flex-col gap-2">
+          <SheetContent side="right" className="w-[280px] sm:w-[320px] flex flex-col pt-14">
+            <div className="flex items-center gap-2 mb-6 pb-6 border-b border-border">
+              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
+                <Activity className="w-4 h-4" />
+              </div>
+              <span className="text-lg font-bold tracking-tight text-foreground">TelePhysio</span>
+            </div>
+            <nav className="flex flex-col gap-1">
               {NAV_LINKS.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className={`px-4 py-3 rounded-lg text-lg font-medium transition-colors ${
+                  className={`px-4 py-3 rounded-lg text-base font-medium transition-colors ${
                     location === link.href
                       ? "bg-primary/10 text-primary"
                       : "text-foreground hover:bg-muted"
@@ -104,20 +121,20 @@ export function Navbar() {
                 </Link>
               ))}
             </nav>
-            <div className="mt-auto pb-8 pt-4">
+            <div className="mt-auto pb-6 pt-6 border-t border-border">
               {patientId ? (
                 <Link
                   href="/dashboard"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-11 px-8 bg-primary text-primary-foreground shadow hover:bg-primary/90 w-full"
+                  className="flex items-center justify-center rounded-md text-sm font-medium h-11 px-6 bg-primary text-primary-foreground shadow hover:bg-primary/90 w-full transition-colors"
                 >
-                  Dashboard
+                  My Dashboard
                 </Link>
               ) : (
                 <Link
                   href="/register"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 h-11 px-8 bg-primary text-primary-foreground shadow hover:bg-primary/90 w-full"
+                  className="flex items-center justify-center rounded-md text-sm font-medium h-11 px-6 bg-primary text-primary-foreground shadow hover:bg-primary/90 w-full transition-colors"
                 >
                   Book Appointment
                 </Link>

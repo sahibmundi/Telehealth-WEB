@@ -48,20 +48,19 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-muted flex items-center justify-center py-16 px-4">
+    <div className="min-h-screen bg-muted flex items-start sm:items-center justify-center py-12 sm:py-16 px-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">Create Your Account</h1>
-          <p className="text-muted-foreground">Register to book appointments and track your recovery.</p>
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-2">Create Your Account</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Register to book appointments and track your recovery.</p>
         </div>
 
-        <div className="bg-card border border-card-border rounded-3xl p-10 shadow-md">
-          <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="bg-card border border-card-border rounded-2xl sm:rounded-3xl p-6 sm:p-10 shadow-md">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
             <div>
               <Label htmlFor="reg-name" className="mb-2 block text-sm font-medium">Full Name</Label>
               <Input
                 id="reg-name"
-                data-testid="input-reg-name"
                 placeholder="Your full name"
                 value={form.name}
                 onChange={(e) => setForm(f => ({ ...f, name: e.target.value }))}
@@ -72,7 +71,6 @@ export default function Register() {
               <Label htmlFor="reg-email" className="mb-2 block text-sm font-medium">Email Address</Label>
               <Input
                 id="reg-email"
-                data-testid="input-reg-email"
                 type="email"
                 placeholder="your@email.com"
                 value={form.email}
@@ -84,7 +82,6 @@ export default function Register() {
               <Label htmlFor="reg-phone" className="mb-2 block text-sm font-medium">Phone Number</Label>
               <Input
                 id="reg-phone"
-                data-testid="input-reg-phone"
                 placeholder="+1 (555) 000-0000"
                 value={form.phone}
                 onChange={(e) => setForm(f => ({ ...f, phone: e.target.value }))}
@@ -95,10 +92,10 @@ export default function Register() {
             <div className="flex items-start gap-3 p-4 bg-primary/5 rounded-xl border border-primary/10">
               <Checkbox
                 id="reg-consent"
-                data-testid="checkbox-reg-consent"
                 checked={form.consent}
                 onCheckedChange={(checked) => setForm(f => ({ ...f, consent: !!checked }))}
                 required
+                className="mt-0.5"
               />
               <Label htmlFor="reg-consent" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
                 I consent to TelePhysio storing and processing my personal health information for the purpose of providing physiotherapy services. I understand I can withdraw this consent at any time.
@@ -107,21 +104,20 @@ export default function Register() {
 
             <Button
               type="submit"
-              className="w-full h-12"
+              className="w-full h-11 sm:h-12"
               disabled={createPatient.isPending || !form.consent}
-              data-testid="button-reg-submit"
             >
               {createPatient.isPending ? "Creating Account..." : "Create Account & Book"}
             </Button>
           </form>
 
-          <div className="mt-6 flex items-center gap-2 justify-center text-xs text-muted-foreground">
+          <div className="mt-5 flex items-center gap-2 justify-center text-xs text-muted-foreground">
             <Shield className="w-3 h-3" />
             Your information is encrypted and secure
           </div>
         </div>
 
-        <div className="mt-8 bg-card border border-card-border rounded-2xl p-6">
+        <div className="mt-6 bg-card border border-card-border rounded-2xl p-5 sm:p-6">
           <h3 className="font-semibold text-foreground mb-3 text-sm">What happens next?</h3>
           <ul className="space-y-2">
             {[
