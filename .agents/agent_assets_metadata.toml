@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "1B2BBW7loTsB-mWQz_lUh"
+uri = "file://artifacts/telephysiotherapy/public/images/hero.png"
+type = "image"
+title = "Tele-physiotherapy hero image"

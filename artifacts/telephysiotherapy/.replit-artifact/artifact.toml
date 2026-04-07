@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "TelePhysiotherapy"
+version = "1.0.0"
+id = "artifacts/telephysiotherapy"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18516
+
+[services.development]
+run = "pnpm --filter @workspace/telephysiotherapy run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/telephysiotherapy", "run", "build" ]
+publicDir = "artifacts/telephysiotherapy/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18516"
+BASE_PATH = "/"

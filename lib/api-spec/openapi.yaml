@@ -3,13 +3,27 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: TelePhysiotherapy API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: appointments
+    description: Appointment management
+  - name: patients
+    description: Patient management
+  - name: blog
+    description: Blog posts and testimonials
+  - name: faqs
+    description: Frequently asked questions
+  - name: symptoms
+    description: Symptom information
+  - name: services
+    description: Service information
+  - name: enquiries
+    description: General enquiries
 paths:
   /healthz:
     get:
@@ -24,6 +38,402 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /appointments:
+    get:
+      operationId: listAppointments
+      tags: [appointments]
+      summary: List appointments
+      parameters:
+        - in: query
+          name: patientId
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: List of appointments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Appointment"
+    post:
+      operationId: createAppointment
+      tags: [appointments]
+      summary: Book an appointment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAppointmentBody"
+      responses:
+        "201":
+          description: Appointment created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appointment"
+        "400":
+          description: Bad request
+
+  /appointments/{id}:
+    get:
+      operationId: getAppointment
+      tags: [appointments]
+      summary: Get appointment by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Appointment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appointment"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateAppointment
+      tags: [appointments]
+      summary: Update appointment
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAppointmentBody"
+      responses:
+        "200":
+          description: Updated appointment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appointment"
+        "404":
+          description: Not found
+
+  /appointments/summary:
+    get:
+      operationId: getAppointmentSummary
+      tags: [appointments]
+      summary: Get appointment counts by status
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppointmentSummary"
+
+  /patients:
+    get:
+      operationId: listPatients
+      tags: [patients]
+      summary: List patients
+      responses:
+        "200":
+          description: List of patients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Patient"
+    post:
+      operationId: createPatient
+      tags: [patients]
+      summary: Register a new patient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePatientBody"
+      responses:
+        "201":
+          description: Patient created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Patient"
+        "400":
+          description: Bad request
+
+  /patients/{id}:
+    get:
+      operationId: getPatient
+      tags: [patients]
+      summary: Get patient by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Patient
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Patient"
+        "404":
+          description: Not found
+    patch:
+      operationId: updatePatient
+      tags: [patients]
+      summary: Update patient profile
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePatientBody"
+      responses:
+        "200":
+          description: Updated patient
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Patient"
+        "404":
+          description: Not found
+
+  /patients/{id}/assessments:
+    get:
+      operationId: getPatientAssessments
+      tags: [patients]
+      summary: Get assessments for a patient
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of assessments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Assessment"
+    post:
+      operationId: createAssessment
+      tags: [patients]
+      summary: Create assessment for a patient
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAssessmentBody"
+      responses:
+        "201":
+          description: Assessment created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Assessment"
+
+  /patients/{id}/exercises:
+    get:
+      operationId: getPatientExercises
+      tags: [patients]
+      summary: Get home exercise regime for a patient
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of exercises
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Exercise"
+
+  /patients/{id}/progress:
+    get:
+      operationId: getPatientProgress
+      tags: [patients]
+      summary: Get progress diary entries for a patient
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of progress entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProgressEntry"
+    post:
+      operationId: createProgressEntry
+      tags: [patients]
+      summary: Add a progress diary entry
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProgressEntryBody"
+      responses:
+        "201":
+          description: Progress entry created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProgressEntry"
+
+  /blog:
+    get:
+      operationId: listBlogPosts
+      tags: [blog]
+      summary: List blog posts and testimonials
+      parameters:
+        - in: query
+          name: type
+          schema:
+            type: ["string", "null"]
+            enum: [blog, testimonial, success_story, null]
+      responses:
+        "200":
+          description: List of posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BlogPost"
+
+  /blog/{id}:
+    get:
+      operationId: getBlogPost
+      tags: [blog]
+      summary: Get blog post by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Blog post
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlogPost"
+        "404":
+          description: Not found
+
+  /faqs:
+    get:
+      operationId: listFaqs
+      tags: [faqs]
+      summary: List FAQs
+      responses:
+        "200":
+          description: List of FAQs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Faq"
+
+  /symptoms:
+    get:
+      operationId: listSymptoms
+      tags: [symptoms]
+      summary: List symptom categories
+      responses:
+        "200":
+          description: List of symptoms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Symptom"
+
+  /services:
+    get:
+      operationId: listServices
+      tags: [services]
+      summary: List all services offered
+      responses:
+        "200":
+          description: List of services
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Service"
+
+  /enquiries:
+    post:
+      operationId: createEnquiry
+      tags: [enquiries]
+      summary: Submit a general enquiry or online session request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEnquiryBody"
+      responses:
+        "201":
+          description: Enquiry submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Enquiry"
+        "400":
+          description: Bad request
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +444,471 @@ components:
       required:
         - status
 
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: integer
+        patientId:
+          type: integer
+        patientName:
+          type: string
+        serviceType:
+          type: string
+        sessionDate:
+          type: string
+        sessionTime:
+          type: string
+        duration:
+          type: integer
+        status:
+          type: string
+          enum: [pending, confirmed, completed, cancelled]
+        sessionLink:
+          type: ["string", "null"]
+        physiotherapist:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required:
+        - id
+        - patientId
+        - patientName
+        - serviceType
+        - sessionDate
+        - sessionTime
+        - duration
+        - status
+        - sessionLink
+        - physiotherapist
+        - notes
+        - createdAt
+
+    CreateAppointmentBody:
+      type: object
+      properties:
+        patientId:
+          type: integer
+        patientName:
+          type: string
+        serviceType:
+          type: string
+        sessionDate:
+          type: string
+        sessionTime:
+          type: string
+        duration:
+          type: integer
+        physiotherapist:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+      required:
+        - patientId
+        - patientName
+        - serviceType
+        - sessionDate
+        - sessionTime
+        - duration
+
+    UpdateAppointmentBody:
+      type: object
+      properties:
+        status:
+          type: ["string", "null"]
+          enum: [pending, confirmed, completed, cancelled, null]
+        sessionLink:
+          type: ["string", "null"]
+        physiotherapist:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+
+    AppointmentSummary:
+      type: object
+      properties:
+        total:
+          type: integer
+        pending:
+          type: integer
+        confirmed:
+          type: integer
+        completed:
+          type: integer
+        cancelled:
+          type: integer
+      required:
+        - total
+        - pending
+        - confirmed
+        - completed
+        - cancelled
+
+    Patient:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        age:
+          type: ["integer", "null"]
+        gender:
+          type: ["string", "null"]
+        chiefComplaint:
+          type: ["string", "null"]
+        medicalHistory:
+          type: ["string", "null"]
+        painIntensity:
+          type: ["integer", "null"]
+        consentGiven:
+          type: boolean
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - email
+        - phone
+        - age
+        - gender
+        - chiefComplaint
+        - medicalHistory
+        - painIntensity
+        - consentGiven
+        - createdAt
+
+    CreatePatientBody:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        age:
+          type: ["integer", "null"]
+        gender:
+          type: ["string", "null"]
+        chiefComplaint:
+          type: ["string", "null"]
+        medicalHistory:
+          type: ["string", "null"]
+        painIntensity:
+          type: ["integer", "null"]
+        consentGiven:
+          type: boolean
+      required:
+        - name
+        - email
+        - phone
+        - consentGiven
+
+    UpdatePatientBody:
+      type: object
+      properties:
+        name:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        age:
+          type: ["integer", "null"]
+        gender:
+          type: ["string", "null"]
+        chiefComplaint:
+          type: ["string", "null"]
+        medicalHistory:
+          type: ["string", "null"]
+        painIntensity:
+          type: ["integer", "null"]
+
+    Assessment:
+      type: object
+      properties:
+        id:
+          type: integer
+        patientId:
+          type: integer
+        chiefComplaint:
+          type: string
+        history:
+          type: ["string", "null"]
+        bodyChart:
+          type: ["string", "null"]
+        painIntensity:
+          type: integer
+        outcomeMeasures:
+          type: ["string", "null"]
+        posturalNotes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required:
+        - id
+        - patientId
+        - chiefComplaint
+        - history
+        - bodyChart
+        - painIntensity
+        - outcomeMeasures
+        - posturalNotes
+        - createdAt
+
+    CreateAssessmentBody:
+      type: object
+      properties:
+        chiefComplaint:
+          type: string
+        history:
+          type: ["string", "null"]
+        bodyChart:
+          type: ["string", "null"]
+        painIntensity:
+          type: integer
+        outcomeMeasures:
+          type: ["string", "null"]
+        posturalNotes:
+          type: ["string", "null"]
+      required:
+        - chiefComplaint
+        - painIntensity
+
+    Exercise:
+      type: object
+      properties:
+        id:
+          type: integer
+        patientId:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        sets:
+          type: ["integer", "null"]
+        reps:
+          type: ["integer", "null"]
+        duration:
+          type: ["string", "null"]
+        frequency:
+          type: ["string", "null"]
+        videoUrl:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required:
+        - id
+        - patientId
+        - name
+        - description
+        - sets
+        - reps
+        - duration
+        - frequency
+        - videoUrl
+        - createdAt
+
+    ProgressEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        patientId:
+          type: integer
+        date:
+          type: string
+        painIntensity:
+          type: integer
+        notes:
+          type: ["string", "null"]
+        exercisesCompleted:
+          type: boolean
+        createdAt:
+          type: string
+      required:
+        - id
+        - patientId
+        - date
+        - painIntensity
+        - notes
+        - exercisesCompleted
+        - createdAt
+
+    CreateProgressEntryBody:
+      type: object
+      properties:
+        date:
+          type: string
+        painIntensity:
+          type: integer
+        notes:
+          type: ["string", "null"]
+        exercisesCompleted:
+          type: boolean
+      required:
+        - date
+        - painIntensity
+        - exercisesCompleted
+
+    BlogPost:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        excerpt:
+          type: ["string", "null"]
+        author:
+          type: string
+        type:
+          type: string
+          enum: [blog, testimonial, success_story]
+        imageUrl:
+          type: ["string", "null"]
+        rating:
+          type: ["integer", "null"]
+        publishedAt:
+          type: string
+      required:
+        - id
+        - title
+        - content
+        - excerpt
+        - author
+        - type
+        - imageUrl
+        - rating
+        - publishedAt
+
+    Faq:
+      type: object
+      properties:
+        id:
+          type: integer
+        question:
+          type: string
+        answer:
+          type: string
+        category:
+          type: ["string", "null"]
+        order:
+          type: integer
+      required:
+        - id
+        - question
+        - answer
+        - category
+        - order
+
+    Symptom:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        bodyPart:
+          type: string
+        commonCauses:
+          type: string
+        treatments:
+          type: string
+        imageUrl:
+          type: ["string", "null"]
+      required:
+        - id
+        - name
+        - description
+        - bodyPart
+        - commonCauses
+        - treatments
+        - imageUrl
+
+    Service:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+          enum: [in_person, online, technology]
+        duration:
+          type: ["string", "null"]
+        price:
+          type: ["string", "null"]
+        imageUrl:
+          type: ["string", "null"]
+        features:
+          type: string
+      required:
+        - id
+        - name
+        - description
+        - type
+        - duration
+        - price
+        - imageUrl
+        - features
+
+    Enquiry:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: ["string", "null"]
+        message:
+          type: string
+        type:
+          type: string
+          enum: [general, online_session, appointment]
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - email
+        - phone
+        - message
+        - type
+        - createdAt
+
+    CreateEnquiryBody:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: ["string", "null"]
+        message:
+          type: string
+        type:
+          type: string
+          enum: [general, online_session, appointment]
+      required:
+        - name
+        - email
+        - message
+        - type
