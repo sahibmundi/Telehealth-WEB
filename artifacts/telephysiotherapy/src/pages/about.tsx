@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Award, Users, Heart, Stethoscope, ArrowRight } from "lucide-react";
+import { CheckCircle2, Award, Users, Heart, Stethoscope, ArrowRight, GraduationCap, Building2 } from "lucide-react";
 
 const values = [
   {
@@ -27,22 +27,24 @@ const values = [
 
 const team = [
   {
-    name: "Dr. Sarah Mitchell",
-    role: "Clinical Director & Senior Physiotherapist",
-    speciality: "MSK & Sports Rehabilitation",
-    bio: "With over 15 years of clinical experience, Dr. Mitchell leads our team with a passion for evidence-based practice and patient education."
+    name: "Dr. Supreet Bindra",
+    photo: "/dr-supreet.jpeg",
+    qualifications: "BPT (Gold Medallist), MPT in Musculoskeletal Physiotherapy (Gold Medallist), PhD (Back Pain)",
+    role: "Associate Professor and Head",
+    department: "Department of Physiotherapy",
+    university: "Sri Guru Granth Sahib World University, Fatehgarh Sahib",
+    speciality: "Musculoskeletal & Back Pain Specialist",
+    bio: "Dr. Supreet Bindra is a double gold medallist with exceptional expertise in musculoskeletal physiotherapy and back pain research. As Head of the Department of Physiotherapy, she brings rigorous academic excellence and clinical insight to every patient interaction."
   },
   {
-    name: "James Okafor",
-    role: "Senior Physiotherapist",
-    speciality: "Neurology & Post-Surgical Rehab",
-    bio: "James specialises in complex neurological conditions and post-operative rehabilitation, helping patients regain independence and quality of life."
-  },
-  {
-    name: "Dr. Priya Sharma",
-    role: "Specialist Physiotherapist",
-    speciality: "Chronic Pain & Electrotherapy",
-    bio: "Dr. Sharma is our technology specialist, with expertise in advanced electrotherapy modalities and chronic pain management."
+    name: "Dr. Pankajpreet Singh",
+    photo: "/dr-pankaj.jpeg",
+    qualifications: "BPT, MPT in Neurological Physiotherapy, PhD",
+    role: "Associate Professor and Dean",
+    department: "Faculty of Allied and Health-Care Sciences",
+    university: "Sri Guru Granth Sahib World University, Fatehgarh Sahib",
+    speciality: "Neurological Physiotherapy Specialist",
+    bio: "Dr. Pankajpreet Singh is a distinguished neurological physiotherapy specialist and Dean of the Faculty of Allied and Health-Care Sciences. His advanced expertise helps patients with complex neurological conditions regain function and independence."
   }
 ];
 
@@ -56,7 +58,7 @@ export default function About() {
             About TelePhysio
           </h1>
           <p className="text-base sm:text-xl text-muted-foreground leading-relaxed">
-            We are a team of dedicated physiotherapists who believe that exceptional rehabilitation care should be available to everyone, anywhere.
+            Led by distinguished academics and clinicians, we believe exceptional rehabilitation care should be available to everyone, anywhere.
           </p>
         </div>
       </section>
@@ -71,11 +73,11 @@ export default function About() {
                 TelePhysio was founded on a simple but powerful belief: the geography of where you live should not determine the quality of physiotherapy care you receive.
               </p>
               <p className="text-muted-foreground text-base sm:text-lg leading-relaxed mb-6 sm:mb-8">
-                We set out to build a clinic that combines the clinical rigour of the best in-person practices with the accessibility and convenience of modern technology.
+                Our team — led by gold-medallist academics and PhD-qualified specialists — brings university-level clinical excellence directly into your home through secure video consultations.
               </p>
               <ul className="space-y-3">
                 {[
-                  "Fully qualified and registered physiotherapists",
+                  "PhD-qualified and gold-medallist physiotherapists",
                   "Comprehensive initial assessments",
                   "Ongoing care and progress tracking",
                   "Advanced technology modalities"
@@ -91,8 +93,8 @@ export default function About() {
               <div className="grid grid-cols-2 gap-4 sm:gap-6">
                 {[
                   { number: "2,000+", label: "Patients Treated" },
-                  { number: "15+", label: "Years Combined Experience" },
-                  { number: "98%", label: "Patient Satisfaction" },
+                  { number: "2×", label: "Gold Medallists" },
+                  { number: "PhD", label: "Qualified Specialists" },
                   { number: "50+", label: "Conditions Treated" }
                 ].map((stat, i) => (
                   <div key={i} className="text-center p-3 sm:p-4">
@@ -106,8 +108,69 @@ export default function About() {
         </div>
       </section>
 
-      {/* Values */}
+      {/* Team */}
       <section className="py-16 sm:py-24 bg-muted">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-3 sm:mb-4">Meet Our Experts</h2>
+            <p className="text-muted-foreground text-base sm:text-lg">
+              PhD-qualified academics and clinicians dedicated to your recovery.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8 sm:gap-10 max-w-4xl mx-auto">
+            {team.map((member, i) => (
+              <div key={i} className="bg-card border border-card-border rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                {/* Photo */}
+                <div className="relative h-64 sm:h-72 bg-primary/5">
+                  <img
+                    src={member.photo}
+                    alt={member.name}
+                    className="w-full h-full object-cover object-top"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <h3 className="text-xl sm:text-2xl font-bold text-white leading-tight">{member.name}</h3>
+                    <p className="text-white/80 text-sm mt-1">{member.speciality}</p>
+                  </div>
+                </div>
+
+                {/* Info */}
+                <div className="p-6 sm:p-8 space-y-4">
+                  {/* Qualifications */}
+                  <div className="flex items-start gap-3">
+                    <GraduationCap className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <p className="text-sm text-foreground font-medium leading-relaxed">{member.qualifications}</p>
+                  </div>
+
+                  {/* Role & Department */}
+                  <div className="flex items-start gap-3">
+                    <Award className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{member.role}</p>
+                      <p className="text-sm text-muted-foreground">{member.department}</p>
+                    </div>
+                  </div>
+
+                  {/* University */}
+                  <div className="flex items-start gap-3">
+                    <Building2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <p className="text-sm text-muted-foreground">{member.university}</p>
+                  </div>
+
+                  {/* Bio */}
+                  <p className="text-sm text-muted-foreground leading-relaxed pt-2 border-t border-border">
+                    {member.bio}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Values */}
+      <section className="py-16 sm:py-24 bg-background">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-16">
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-3 sm:mb-4">Our Values</h2>
@@ -127,37 +190,12 @@ export default function About() {
         </div>
       </section>
 
-      {/* Team */}
-      <section className="py-16 sm:py-24 bg-background">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-3 sm:mb-4">Meet the Team</h2>
-            <p className="text-muted-foreground text-base sm:text-lg">Experienced, qualified professionals dedicated to your recovery.</p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {team.map((member, i) => (
-              <div key={i} className="bg-card border border-card-border rounded-2xl p-6 sm:p-8">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center mb-4 sm:mb-6 mx-auto">
-                  <span className="text-xl sm:text-2xl font-bold text-primary">{member.name.split(' ').map(n => n[0]).join('')}</span>
-                </div>
-                <div className="text-center mb-3 sm:mb-4">
-                  <h3 className="text-base sm:text-lg font-semibold text-foreground">{member.name}</h3>
-                  <p className="text-xs sm:text-sm text-primary font-medium mt-1">{member.role}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{member.speciality}</p>
-                </div>
-                <p className="text-muted-foreground text-sm leading-relaxed text-center">{member.bio}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* CTA */}
       <section className="py-14 sm:py-20 bg-primary text-primary-foreground">
         <div className="container mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3 sm:mb-4">Ready to begin your recovery?</h2>
           <p className="text-primary-foreground/80 text-base sm:text-lg max-w-xl mx-auto mb-6 sm:mb-8">
-            Register today and take the first step towards better health with our expert team.
+            Book a consultation with our expert team today.
           </p>
           <Link href="/register">
             <Button size="lg" variant="secondary" className="h-11 sm:h-12 px-8">
