@@ -11,12 +11,12 @@ const values = [
   {
     icon: <Award className="w-6 h-6 text-primary" />,
     title: "Clinical Excellence",
-    description: "Our physiotherapists are highly qualified practitioners who keep their skills current through ongoing professional development."
+    description: "Our physiotherapists are highly qualified, gold-medallist practitioners who keep their skills current through ongoing research."
   },
   {
     icon: <Users className="w-6 h-6 text-primary" />,
     title: "Accessibility for All",
-    description: "We believe everyone deserves access to expert physiotherapy, regardless of location, mobility, or schedule constraints."
+    description: "We believe everyone deserves access to expert physiotherapy, regardless of location, mobility, or schedule."
   },
   {
     icon: <Stethoscope className="w-6 h-6 text-primary" />,
@@ -58,7 +58,7 @@ export default function About() {
             About TelePhysio
           </h1>
           <p className="text-base sm:text-xl text-muted-foreground leading-relaxed">
-            Led by distinguished academics and clinicians, we believe exceptional rehabilitation care should be available to everyone, anywhere.
+            Led by PhD-qualified academics and gold-medallist clinicians, we bring university-level physiotherapy expertise directly to your home.
           </p>
         </div>
       </section>
@@ -78,9 +78,9 @@ export default function About() {
               <ul className="space-y-3">
                 {[
                   "PhD-qualified and gold-medallist physiotherapists",
-                  "Comprehensive initial assessments",
-                  "Ongoing care and progress tracking",
-                  "Advanced technology modalities"
+                  "Comprehensive initial assessments online",
+                  "Personalised home exercise programmes",
+                  "Progress tracked through your patient dashboard"
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-foreground text-sm sm:text-base">
                     <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
@@ -92,10 +92,10 @@ export default function About() {
             <div className="bg-primary/5 rounded-3xl p-6 sm:p-10 border border-primary/10">
               <div className="grid grid-cols-2 gap-4 sm:gap-6">
                 {[
-                  { number: "2,000+", label: "Patients Treated" },
                   { number: "2×", label: "Gold Medallists" },
                   { number: "PhD", label: "Qualified Specialists" },
-                  { number: "50+", label: "Conditions Treated" }
+                  { number: "MSK+", label: "Neuro Specialities" },
+                  { number: "Online", label: "Anywhere Access" }
                 ].map((stat, i) => (
                   <div key={i} className="text-center p-3 sm:p-4">
                     <p className="text-3xl sm:text-4xl font-bold text-primary mb-1 sm:mb-2">{stat.number}</p>
@@ -121,29 +121,24 @@ export default function About() {
           <div className="grid md:grid-cols-2 gap-8 sm:gap-10 max-w-4xl mx-auto">
             {team.map((member, i) => (
               <div key={i} className="bg-card border border-card-border rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                {/* Photo */}
                 <div className="relative h-64 sm:h-72 bg-primary/5">
                   <img
                     src={member.photo}
                     alt={member.name}
                     className="w-full h-full object-cover object-top"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/10 to-transparent" />
                   <div className="absolute bottom-4 left-4 right-4">
                     <h3 className="text-xl sm:text-2xl font-bold text-white leading-tight">{member.name}</h3>
                     <p className="text-white/80 text-sm mt-1">{member.speciality}</p>
                   </div>
                 </div>
 
-                {/* Info */}
                 <div className="p-6 sm:p-8 space-y-4">
-                  {/* Qualifications */}
                   <div className="flex items-start gap-3">
                     <GraduationCap className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                     <p className="text-sm text-foreground font-medium leading-relaxed">{member.qualifications}</p>
                   </div>
-
-                  {/* Role & Department */}
                   <div className="flex items-start gap-3">
                     <Award className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                     <div>
@@ -151,14 +146,10 @@ export default function About() {
                       <p className="text-sm text-muted-foreground">{member.department}</p>
                     </div>
                   </div>
-
-                  {/* University */}
                   <div className="flex items-start gap-3">
                     <Building2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                     <p className="text-sm text-muted-foreground">{member.university}</p>
                   </div>
-
-                  {/* Bio */}
                   <p className="text-sm text-muted-foreground leading-relaxed pt-2 border-t border-border">
                     {member.bio}
                   </p>
@@ -179,7 +170,7 @@ export default function About() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8">
             {values.map((value, i) => (
               <div key={i} className="bg-card p-6 sm:p-8 rounded-2xl border border-card-border">
-                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 sm:mb-5">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
                   {value.icon}
                 </div>
                 <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2 sm:mb-3">{value.title}</h3>
@@ -195,10 +186,10 @@ export default function About() {
         <div className="container mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3 sm:mb-4">Ready to begin your recovery?</h2>
           <p className="text-primary-foreground/80 text-base sm:text-lg max-w-xl mx-auto mb-6 sm:mb-8">
-            Book a consultation with our expert team today.
+            Register today and book your first online consultation with our expert team.
           </p>
           <Link href="/register">
-            <Button size="lg" variant="secondary" className="h-11 sm:h-12 px-8">
+            <Button size="lg" variant="secondary" className="h-11 sm:h-12 px-8 font-semibold">
               Book Appointment <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </Link>

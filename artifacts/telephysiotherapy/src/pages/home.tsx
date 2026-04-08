@@ -1,55 +1,56 @@
 import { Link } from "wouter";
-import { ArrowRight, CheckCircle2, Star, Activity, PhoneCall, Heart, Shield } from "lucide-react";
+import { ArrowRight, Activity, PhoneCall, Heart, Shield, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const features = [
   {
     icon: <Activity className="w-6 h-6 text-primary" />,
-    title: "Expert Practitioners",
-    description: "Certified specialists with years of clinical experience across a wide range of physiotherapy modalities."
+    title: "PhD-Qualified Experts",
+    description: "Our team is led by double gold-medallist, PhD-qualified physiotherapists from Sri Guru Granth Sahib World University."
   },
   {
     icon: <PhoneCall className="w-6 h-6 text-primary" />,
-    title: "Convenient Access",
-    description: "Connect with your physiotherapist from anywhere. No commuting, no waiting rooms, just direct care."
+    title: "Convenient Online Access",
+    description: "Connect with your physiotherapist from anywhere. No commuting, no waiting rooms — just direct, expert care."
   },
   {
     icon: <Heart className="w-6 h-6 text-primary" />,
-    title: "Personalised Plans",
-    description: "Every body is different. Get a custom recovery plan designed specifically for your condition and goals."
+    title: "Personalised Treatment",
+    description: "Every patient receives a custom rehabilitation plan designed specifically for their condition and recovery goals."
   },
   {
     icon: <Shield className="w-6 h-6 text-primary" />,
     title: "Secure & Confidential",
-    description: "All consultations are conducted through a fully encrypted, GDPR-compliant video platform."
+    description: "All consultations take place through a fully encrypted, confidential video platform."
   }
 ];
 
 const steps = [
-  { step: "1", title: "Register", description: "Create your patient account in minutes." },
-  { step: "2", title: "Consult", description: "Meet your physiotherapist via secure video." },
-  { step: "3", title: "Recover", description: "Follow your personalised plan and track progress." },
+  { step: "1", title: "Register", description: "Create your free patient account in minutes." },
+  { step: "2", title: "Book", description: "Choose a date and time that suits you." },
+  { step: "3", title: "Consult", description: "Meet your specialist via secure video call." },
+  { step: "4", title: "Recover", description: "Follow your personalised plan and track your progress." },
 ];
 
 export default function Home() {
   return (
     <div className="flex flex-col w-full">
-      {/* Hero Section */}
-      <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden bg-muted">
+      {/* Hero */}
+      <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden bg-foreground">
         <div className="absolute inset-0 z-0">
           <img
             src="/images/hero.png"
-            alt="Expert Physiotherapy at Home"
-            className="w-full h-full object-cover object-center opacity-80"
+            alt="Online physiotherapy consultation"
+            className="w-full h-full object-cover object-center opacity-60"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-foreground/90 via-foreground/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-foreground/95 via-foreground/70 to-foreground/30" />
         </div>
 
-        <div className="container mx-auto px-4 sm:px-6 relative z-10 py-16 sm:py-20">
+        <div className="container mx-auto px-4 sm:px-6 relative z-10 py-20 sm:py-24">
           <div className="max-w-xl text-white">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/20 text-primary-foreground border border-primary/30 mb-5 backdrop-blur-md">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/30 border border-primary/40 mb-6">
               <Activity className="w-3.5 h-3.5 shrink-0" />
-              <span className="text-xs sm:text-sm font-medium tracking-wide">Trusted Online Clinic</span>
+              <span className="text-xs sm:text-sm font-medium">Expert Tele-Physiotherapy</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-5 leading-tight">
@@ -58,42 +59,39 @@ export default function Home() {
             </h1>
 
             <p className="text-sm sm:text-lg text-white/80 mb-8 leading-relaxed">
-              Experience world-class rehabilitation and pain management without the waiting room. Our certified physiotherapists provide tailored care through secure video consultations.
+              Get assessed and treated by PhD-qualified physiotherapists through secure video consultations — without leaving home.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 mb-10">
               <Link href="/register">
-                <Button size="lg" className="w-full sm:w-auto text-sm sm:text-base h-11 sm:h-12 px-6 sm:px-8">
+                <Button size="lg" className="w-full sm:w-auto h-12 px-8 text-base font-semibold">
                   Book Appointment
                   <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
               </Link>
-              <Link href="/services/online">
+              <Link href="/about">
                 <Button
                   variant="outline"
                   size="lg"
-                  className="w-full sm:w-auto text-sm sm:text-base h-11 sm:h-12 px-6 sm:px-8 bg-white/10 hover:bg-white/20 border-white/20 text-white"
+                  className="w-full sm:w-auto h-12 px-8 text-base font-semibold bg-white/10 hover:bg-white/20 border-white/30 text-white"
                 >
-                  Learn About Online Care
+                  Meet Our Doctors
                 </Button>
               </Link>
             </div>
 
-            <div className="mt-10 flex items-center gap-4">
-              <div className="flex -space-x-3">
-                {[1, 2, 3, 4].map(i => (
-                  <div key={i} className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-foreground bg-muted flex items-center justify-center overflow-hidden">
-                    <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i}&backgroundColor=115e59`} alt="Patient" />
-                  </div>
-                ))}
-              </div>
-              <div className="flex flex-col">
-                <div className="flex text-yellow-400">
-                  {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-3.5 h-3.5 fill-current" />)}
-                </div>
-                <span className="text-xs sm:text-sm font-medium text-white/90">Trusted by 2,000+ patients</span>
-              </div>
-            </div>
+            <ul className="space-y-2">
+              {[
+                "Double gold-medallist specialists",
+                "Personalised home exercise plans",
+                "Secure, confidential video sessions",
+              ].map((point, i) => (
+                <li key={i} className="flex items-center gap-2 text-sm text-white/90">
+                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+                  {point}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
@@ -101,18 +99,17 @@ export default function Home() {
       {/* Features */}
       <section className="py-16 sm:py-24 bg-background">
         <div className="container mx-auto px-4 sm:px-6">
-          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-3 sm:mb-4">Why Choose TelePhysio?</h2>
-            <p className="text-muted-foreground text-base sm:text-lg">We combine clinical excellence with digital convenience to deliver better outcomes, faster.</p>
+          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-3">Why Choose TelePhysio?</h2>
+            <p className="text-muted-foreground text-base sm:text-lg">Clinical excellence combined with the convenience of online care.</p>
           </div>
-
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8">
             {features.map((feature, i) => (
-              <div key={i} className="bg-card p-6 sm:p-8 rounded-2xl border border-card-border shadow-sm hover:shadow-md transition-shadow">
-                <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-4 sm:mb-6">
+              <div key={i} className="bg-card p-6 sm:p-8 rounded-2xl border border-card-border hover:shadow-md transition-shadow">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
                   {feature.icon}
                 </div>
-                <h3 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3">{feature.title}</h3>
+                <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">{feature.title}</h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">{feature.description}</p>
               </div>
             ))}
@@ -123,59 +120,91 @@ export default function Home() {
       {/* How It Works */}
       <section className="py-16 sm:py-24 bg-muted">
         <div className="container mx-auto px-4 sm:px-6">
-          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-3 sm:mb-4">How It Works</h2>
-            <p className="text-muted-foreground text-base sm:text-lg">Getting started with TelePhysio takes just minutes.</p>
+          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-3">How It Works</h2>
+            <p className="text-muted-foreground text-base sm:text-lg">From registration to recovery — all in four simple steps.</p>
           </div>
-          <div className="grid sm:grid-cols-3 gap-6 sm:gap-8 max-w-3xl mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 max-w-4xl mx-auto">
             {steps.map((item, i) => (
-              <div key={i} className="flex sm:flex-col items-center sm:items-center gap-4 sm:gap-4 text-left sm:text-center">
-                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shrink-0 text-white font-bold text-lg">
+              <div key={i} className="flex flex-col items-center text-center">
+                <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shrink-0 text-white font-bold text-lg mb-4 shadow-sm">
                   {item.step}
                 </div>
-                <div>
-                  <h3 className="text-base sm:text-lg font-semibold text-foreground mb-1">{item.title}</h3>
-                  <p className="text-muted-foreground text-sm">{item.description}</p>
-                </div>
+                <h3 className="text-base font-semibold text-foreground mb-1">{item.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed">{item.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-16 sm:py-20 bg-background">
+      {/* Meet the Doctors */}
+      <section className="py-16 sm:py-24 bg-background">
         <div className="container mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-3">Meet Your Specialists</h2>
+            <p className="text-muted-foreground text-base sm:text-lg">PhD-qualified academics dedicated to your recovery.</p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-3xl mx-auto">
             {[
-              { number: "2,000+", label: "Patients Treated" },
-              { number: "98%", label: "Satisfaction Rate" },
-              { number: "15+", label: "Years Experience" },
-              { number: "50+", label: "Conditions Treated" },
-            ].map((stat, i) => (
-              <div key={i} className="text-center">
-                <p className="text-3xl sm:text-4xl font-bold text-primary mb-1 sm:mb-2">{stat.number}</p>
-                <p className="text-xs sm:text-sm text-muted-foreground">{stat.label}</p>
+              {
+                photo: "/dr-supreet.jpeg",
+                name: "Dr. Supreet Bindra",
+                quals: "BPT (Gold Medallist), MPT Musculoskeletal (Gold Medallist), PhD",
+                role: "Associate Professor & Head of Physiotherapy",
+                spec: "Musculoskeletal & Back Pain"
+              },
+              {
+                photo: "/dr-pankaj.jpeg",
+                name: "Dr. Pankajpreet Singh",
+                quals: "BPT, MPT Neurological Physiotherapy, PhD",
+                role: "Associate Professor & Dean, Allied Health Sciences",
+                spec: "Neurological Physiotherapy"
+              }
+            ].map((doc, i) => (
+              <div key={i} className="bg-card border border-card-border rounded-2xl overflow-hidden flex flex-col sm:flex-row items-stretch">
+                <div className="sm:w-36 h-48 sm:h-auto shrink-0">
+                  <img src={doc.photo} alt={doc.name} className="w-full h-full object-cover object-top" />
+                </div>
+                <div className="p-5 flex flex-col justify-center">
+                  <p className="text-xs text-primary font-semibold uppercase tracking-wide mb-1">{doc.spec}</p>
+                  <h3 className="text-lg font-bold text-foreground mb-1">{doc.name}</h3>
+                  <p className="text-xs text-muted-foreground mb-2">{doc.quals}</p>
+                  <p className="text-xs text-foreground/70">{doc.role}</p>
+                </div>
               </div>
             ))}
+          </div>
+          <div className="text-center mt-8">
+            <Link href="/about">
+              <Button variant="outline" className="h-10 px-6">
+                View Full Profiles <ArrowRight className="ml-2 w-4 h-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-16 sm:py-24 bg-primary text-primary-foreground relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
-        <div className="container mx-auto px-4 sm:px-6 text-center relative z-10">
+      <section className="py-16 sm:py-24 bg-primary text-primary-foreground">
+        <div className="container mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-2xl sm:text-4xl font-bold tracking-tight mb-4 sm:mb-6">Ready to start your recovery?</h2>
-          <p className="text-base sm:text-xl text-primary-foreground/80 max-w-2xl mx-auto mb-8 sm:mb-10">
-            Book your initial consultation today and take the first step towards a pain-free life.
+          <p className="text-base sm:text-xl text-primary-foreground/80 max-w-2xl mx-auto mb-8">
+            Register today, book your first appointment, and start your personalised recovery journey.
           </p>
-          <Link href="/register">
-            <Button size="lg" variant="secondary" className="text-sm sm:text-base h-12 sm:h-14 px-8 sm:px-10">
-              Get Started Now
-              <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/register">
+              <Button size="lg" variant="secondary" className="h-12 px-10 text-base font-semibold">
+                Register & Book Now
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
+            <Link href="/contact">
+              <Button size="lg" variant="outline" className="h-12 px-10 text-base font-semibold bg-white/10 hover:bg-white/20 border-white/30 text-white">
+                Ask a Question
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
     </div>
