@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { ArrowRight, Activity, PhoneCall, Heart, Shield, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Activity, PhoneCall, Heart, Shield, CheckCircle2, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const features = [
@@ -36,7 +36,7 @@ export default function Home() {
   return (
     <div className="flex flex-col w-full">
       {/* Hero */}
-      <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden bg-foreground">
+      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-foreground">
         <div className="absolute inset-0 z-0">
           <img
             src="/images/hero.png"
@@ -48,12 +48,13 @@ export default function Home() {
 
         <div className="container mx-auto px-4 sm:px-6 relative z-10 py-20 sm:py-24">
           <div className="max-w-xl text-white">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/30 border border-primary/40 mb-6">
-              <Activity className="w-3.5 h-3.5 shrink-0" />
-              <span className="text-xs sm:text-sm font-medium">Expert Tele-Physiotherapy</span>
+            {/* Institution badge */}
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 border border-white/25 mb-5">
+              <Building2 className="w-3.5 h-3.5 shrink-0 text-primary" />
+              <span className="text-[11px] sm:text-xs font-medium text-white/90">Sri Guru Granth Sahib World University, Fatehgarh Sahib</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-5 leading-tight">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight mb-4 leading-tight">
               Expert Physiotherapy,<br />
               <span className="text-primary">From Your Home.</span>
             </h1>
@@ -82,8 +83,8 @@ export default function Home() {
 
             <ul className="space-y-2">
               {[
-                "Double gold-medallist specialists",
-                "Personalised home exercise plans",
+                "Double gold-medallist, PhD-qualified specialists",
+                "Personalised home exercise & treatment plans",
                 "Secure, confidential video sessions",
               ].map((point, i) => (
                 <li key={i} className="flex items-center gap-2 text-sm text-white/90">
@@ -92,6 +93,18 @@ export default function Home() {
                 </li>
               ))}
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Institution Banner */}
+      <section className="bg-primary/5 border-y border-primary/10 py-5">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-center sm:text-left">
+            <Building2 className="w-6 h-6 text-primary shrink-0" />
+            <p className="text-sm sm:text-base text-foreground font-medium">
+              Department of Physiotherapy, <span className="text-primary font-semibold">Sri Guru Granth Sahib World University</span>, Fatehgarh Sahib, Punjab
+            </p>
           </div>
         </div>
       </section>
