@@ -121,20 +121,19 @@ export default function About() {
           <div className="grid md:grid-cols-2 gap-8 sm:gap-10 max-w-4xl mx-auto">
             {team.map((member, i) => (
               <div key={i} className="bg-card border border-card-border rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                <div className="relative h-64 sm:h-72 bg-primary/5">
+                <div className="h-64 sm:h-72 bg-primary/5">
                   <img
                     src={member.photo}
                     alt={member.name}
                     className="w-full h-full object-cover object-top"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 via-foreground/10 to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <h3 className="text-xl sm:text-2xl font-bold text-white leading-tight">{member.name}</h3>
-                    <p className="text-white/80 text-sm mt-1">{member.speciality}</p>
-                  </div>
                 </div>
 
                 <div className="p-6 sm:p-8 space-y-4">
+                  <div className="pb-3 border-b border-border">
+                    <h3 className="text-xl font-bold text-foreground">{member.name}</h3>
+                    <p className="text-sm text-primary font-semibold mt-0.5">{member.speciality}</p>
+                  </div>
                   <div className="flex items-start gap-3">
                     <GraduationCap className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                     <p className="text-sm text-foreground font-medium leading-relaxed">{member.qualifications}</p>
