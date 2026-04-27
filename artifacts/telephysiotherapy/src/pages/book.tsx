@@ -1,15 +1,15 @@
-import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
+import { useState } from "react";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { useCreatePatient, useCreateAppointment } from "@workspace/api-client-react";
+import { useCreateAppointment } from "@workspace/api-client-react";
+import { useAuth } from "@/hooks/use-auth";
 import {
   CheckCircle2, Calendar, Clock, Stethoscope, User, ArrowRight,
-  ChevronRight, IndianRupee, Shield, Video
+  ChevronRight, IndianRupee, Shield, Video, LogIn
 } from "lucide-react";
 
 const SERVICES = [
@@ -47,21 +47,13 @@ const STEPS = ["Service", "Doctor & Time", "Your Details", "Confirm"];
 export default function Book() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { user, isLoading: authLoading } = useAuth();
   const [step, setStep] = useState(0);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [existingPatientId, setExistingPatientId] = useState<number | null>(null);
-  const [existingPatientName, setExistingPatientName] = useState("");
   const [done, setDone] = useState(false);
 
-  useEffect(() => {
-    const pid = localStorage.getItem("patientId");
-    const pname = localStorage.getItem("patientName");
-    if (pid) {
-      setIsLoggedIn(true);
-      setExistingPatientId(parseInt(pid, 10));
-      setExistingPatientName(pname ?? "");
-    }
-  }, []);
+  const isLoggedIn = !!user;
+  const existingPatientId = user?.id ?? null;
+  const existingPatientName = user?.name ?? "";
 
   const [booking, setBooking] = useState({
     serviceType: "",
@@ -72,19 +64,8 @@ export default function Book() {
     fee: "₹500",
   });
 
-  const [patient, setPatient] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    age: "",
-    gender: "",
-    consent: false,
-  });
-
-  const createPatient = useCreatePatient();
   const createAppointment = useCreateAppointment();
 
-  const selectedService = SERVICES.find(s => s.value === booking.serviceType);
   const selectedDoctor = DOCTORS.find(d => d.value === booking.doctor);
 
   const today = new Date().toISOString().split("T")[0];
@@ -97,41 +78,18 @@ export default function Book() {
   };
 
   const handleConfirm = async () => {
+    if (!existingPatientId) {
+      setLocation("/login");
+      return;
+    }
+
     try {
-      let patientId = existingPatientId;
-      let patientName = existingPatientName;
-
-      if (!isLoggedIn) {
-        const newPatient = await new Promise<{ id: number; name: string }>((resolve, reject) => {
-          createPatient.mutate(
-            {
-              data: {
-                name: patient.name.trim(),
-                email: patient.email.trim(),
-                phone: patient.phone.trim(),
-                age: patient.age ? parseInt(patient.age) : undefined,
-                gender: patient.gender || undefined,
-                fees: booking.fee,
-                consentGiven: patient.consent,
-              }
-            },
-            { onSuccess: (p) => resolve(p), onError: reject }
-          );
-        });
-        localStorage.setItem("patientId", String(newPatient.id));
-        localStorage.setItem("patientName", newPatient.name);
-        patientId = newPatient.id;
-        patientName = newPatient.name;
-      }
-
-      if (!patientId) return;
-
       await new Promise<void>((resolve, reject) => {
         createAppointment.mutate(
           {
             data: {
-              patientId,
-              patientName,
+              patientId: existingPatientId,
+              patientName: existingPatientName,
               serviceType: booking.serviceType,
               sessionDate: booking.date,
               sessionTime: booking.time,
@@ -148,6 +106,36 @@ export default function Book() {
       toast({ title: "Something went wrong. Please try again.", variant: "destructive" });
     }
   };
+
+  if (!authLoading && !isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-muted flex items-center justify-center px-4 py-16">
+        <div className="bg-card border border-card-border rounded-3xl p-8 sm:p-12 max-w-md w-full text-center shadow-lg">
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5">
+            <LogIn className="w-8 h-8 text-primary" />
+          </div>
+          <h2 className="text-2xl font-bold text-foreground mb-2">Sign in to book</h2>
+          <p className="text-muted-foreground mb-6 leading-relaxed">
+            You need an account before booking an appointment. It only takes a minute.
+          </p>
+          <div className="flex flex-col gap-3">
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center rounded-md text-sm font-semibold h-11 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            >
+              Log in
+            </Link>
+            <Link
+              href="/register"
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium h-11 border border-border hover:bg-muted transition-colors"
+            >
+              Create an account
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (done) {
     return (
@@ -338,77 +326,28 @@ export default function Book() {
             </div>
           )}
 
-          {/* ── STEP 2: Patient Details (skip if logged in) ── */}
+          {/* ── STEP 2: Confirm patient ── */}
           {step === 2 && (
             <div className="p-6 sm:p-8">
-              {isLoggedIn ? (
-                <div className="text-center py-6">
-                  <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                    <User className="w-7 h-7 text-primary" />
-                  </div>
-                  <h2 className="text-lg font-semibold text-foreground mb-2">Welcome back, {existingPatientName}!</h2>
-                  <p className="text-sm text-muted-foreground mb-6">Your account details are already saved. We'll use them for this booking.</p>
-                  <div className="flex gap-3">
-                    <Button variant="outline" onClick={handleBack} className="flex-1 h-11">Back</Button>
-                    <Button className="flex-1 h-11" onClick={handleNext}>
-                      Continue <ChevronRight className="ml-1 w-4 h-4" />
-                    </Button>
-                  </div>
+              <div className="text-center py-6">
+                <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                  <User className="w-7 h-7 text-primary" />
                 </div>
-              ) : (
-                <>
-                  <h2 className="text-lg font-semibold text-foreground mb-1">Your details</h2>
-                  <p className="text-sm text-muted-foreground mb-5">We'll create your patient account and send a confirmation.</p>
-                  <div className="space-y-4">
-                    <div>
-                      <Label className="mb-1.5 block text-sm font-medium">Full Name *</Label>
-                      <Input placeholder="Your full name" value={patient.name} onChange={(e) => setPatient(p => ({ ...p, name: e.target.value }))} required />
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <Label className="mb-1.5 block text-sm font-medium">Age</Label>
-                        <Input type="number" min="1" max="120" placeholder="Age" value={patient.age} onChange={(e) => setPatient(p => ({ ...p, age: e.target.value }))} />
-                      </div>
-                      <div>
-                        <Label className="mb-1.5 block text-sm font-medium">Gender</Label>
-                        <Select value={patient.gender} onValueChange={(v) => setPatient(p => ({ ...p, gender: v }))}>
-                          <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Male">Male</SelectItem>
-                            <SelectItem value="Female">Female</SelectItem>
-                            <SelectItem value="Other">Other</SelectItem>
-                            <SelectItem value="Prefer not to say">Prefer not to say</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                    <div>
-                      <Label className="mb-1.5 block text-sm font-medium">Email Address *</Label>
-                      <Input type="email" placeholder="your@email.com" value={patient.email} onChange={(e) => setPatient(p => ({ ...p, email: e.target.value }))} required />
-                    </div>
-                    <div>
-                      <Label className="mb-1.5 block text-sm font-medium">Phone Number *</Label>
-                      <Input placeholder="+91 98765 43210" value={patient.phone} onChange={(e) => setPatient(p => ({ ...p, phone: e.target.value }))} required />
-                    </div>
-                    <div className="flex items-start gap-3 p-4 bg-primary/5 rounded-xl border border-primary/10">
-                      <Checkbox id="book-consent" checked={patient.consent} onCheckedChange={(c) => setPatient(p => ({ ...p, consent: !!c }))} className="mt-0.5" />
-                      <Label htmlFor="book-consent" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
-                        I consent to TelePhysio storing my personal health information for the purpose of providing physiotherapy services.
-                      </Label>
-                    </div>
-                  </div>
-                  <div className="flex gap-3 mt-6">
-                    <Button variant="outline" onClick={handleBack} className="flex-1 h-11">Back</Button>
-                    <Button
-                      className="flex-1 h-11"
-                      disabled={!patient.name || !patient.email || !patient.phone || !patient.consent}
-                      onClick={handleNext}
-                    >
-                      Continue <ChevronRight className="ml-1 w-4 h-4" />
-                    </Button>
-                  </div>
-                </>
-              )}
+                <h2 className="text-lg font-semibold text-foreground mb-2">
+                  Welcome back, {existingPatientName}!
+                </h2>
+                <p className="text-sm text-muted-foreground mb-6">
+                  Your account details are saved. We&apos;ll use them for this booking.
+                </p>
+                <div className="flex gap-3">
+                  <Button variant="outline" onClick={handleBack} className="flex-1 h-11">
+                    Back
+                  </Button>
+                  <Button className="flex-1 h-11" onClick={handleNext}>
+                    Continue <ChevronRight className="ml-1 w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
             </div>
           )}
 
@@ -449,13 +388,18 @@ export default function Book() {
                   </div>
                 </div>
 
-                {!isLoggedIn && patient.name && (
-                  <div className="p-3.5 bg-muted rounded-xl border border-border">
-                    <p className="text-xs text-muted-foreground mb-0.5 flex items-center gap-1"><User className="w-3 h-3" /> Patient</p>
-                    <p className="text-sm font-semibold text-foreground">{patient.name}</p>
-                    <p className="text-xs text-muted-foreground">{patient.email} · {patient.phone}</p>
-                  </div>
-                )}
+                <div className="p-3.5 bg-muted rounded-xl border border-border">
+                  <p className="text-xs text-muted-foreground mb-0.5 flex items-center gap-1">
+                    <User className="w-3 h-3" /> Patient
+                  </p>
+                  <p className="text-sm font-semibold text-foreground">{existingPatientName}</p>
+                  {user?.email && (
+                    <p className="text-xs text-muted-foreground">
+                      {user.email}
+                      {user.phone ? ` · ${user.phone}` : ""}
+                    </p>
+                  )}
+                </div>
 
                 <div className="flex items-start gap-3 p-3.5 bg-primary/5 rounded-xl border border-primary/10 text-sm text-muted-foreground">
                   <Video className="w-4 h-4 text-primary shrink-0 mt-0.5" />
@@ -472,9 +416,9 @@ export default function Book() {
                 <Button
                   className="flex-1 h-11"
                   onClick={handleConfirm}
-                  disabled={createPatient.isPending || createAppointment.isPending}
+                  disabled={createAppointment.isPending}
                 >
-                  {(createPatient.isPending || createAppointment.isPending) ? "Confirming..." : "Confirm Booking"}
+                  {createAppointment.isPending ? "Confirming..." : "Confirm Booking"}
                   <CheckCircle2 className="ml-2 w-4 h-4" />
                 </Button>
               </div>
@@ -482,15 +426,6 @@ export default function Book() {
           )}
         </div>
 
-        {/* Already have an account */}
-        {!isLoggedIn && step < 3 && (
-          <p className="text-center text-sm text-muted-foreground mt-5">
-            Already have an account?{" "}
-            <button onClick={() => setLocation("/dashboard")} className="text-primary font-semibold hover:underline">
-              Go to Dashboard
-            </button>
-          </p>
-        )}
       </div>
     </div>
   );

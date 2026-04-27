@@ -1,8 +1,17 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, Activity } from "lucide-react";
+import { Menu, Activity, LogOut, LayoutDashboard, LogIn } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/hooks/use-auth";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
@@ -13,14 +22,25 @@ const NAV_LINKS = [
   { href: "/contact", label: "Contact" },
 ];
 
-export function Navbar() {
-  const [location] = useLocation();
-  const [isOpen, setIsOpen] = useState(false);
-  const [patientId, setPatientId] = useState<string | null>(null);
+function getInitials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("") || "U";
+}
 
-  useEffect(() => {
-    setPatientId(localStorage.getItem("patientId"));
-  }, [location]);
+export function Navbar() {
+  const [location, setLocation] = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    setIsOpen(false);
+    setLocation("/");
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-border shadow-sm">
@@ -31,16 +51,24 @@ export function Navbar() {
             <Activity className="w-5 h-5" />
           </div>
           <div className="hidden sm:block">
-            <span className="text-base font-bold tracking-tight text-foreground leading-tight block">TelePhysio</span>
-            <span className="text-[10px] text-muted-foreground leading-tight block">SGGSWU</span>
+            <span className="text-base font-bold tracking-tight text-foreground leading-tight block">
+              TelePhysio
+            </span>
+            <span className="text-[10px] text-muted-foreground leading-tight block">
+              SGGSWU
+            </span>
           </div>
-          <span className="sm:hidden text-base font-bold tracking-tight text-foreground">TelePhysio</span>
+          <span className="sm:hidden text-base font-bold tracking-tight text-foreground">
+            TelePhysio
+          </span>
         </Link>
 
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center gap-0.5 flex-1 justify-center">
           {NAV_LINKS.map((link) => {
-            const isActive = location === link.href || (link.href !== "/" && location.startsWith(link.href));
+            const isActive =
+              location === link.href ||
+              (link.href !== "/" && location.startsWith(link.href));
             return (
               <Link
                 key={link.href}
@@ -58,21 +86,68 @@ export function Navbar() {
         </nav>
 
         {/* Desktop CTA */}
-        <div className="hidden lg:flex items-center shrink-0">
-          {patientId ? (
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center justify-center rounded-md text-sm font-semibold h-9 px-4 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
-              My Dashboard
-            </Link>
+        <div className="hidden lg:flex items-center gap-2 shrink-0">
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="flex items-center gap-2 px-2 py-1 rounded-full hover:bg-muted transition-colors"
+                  aria-label="Account menu"
+                >
+                  <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-semibold">
+                    {getInitials(user.name)}
+                  </div>
+                  <span className="text-sm font-medium text-foreground max-w-[140px] truncate">
+                    {user.name.split(" ")[0]}
+                  </span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="font-normal">
+                  <div className="text-xs text-muted-foreground">Signed in as</div>
+                  <div className="font-semibold text-foreground truncate">
+                    {user.name}
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard" className="cursor-pointer">
+                    <LayoutDashboard className="w-4 h-4 mr-2" />
+                    My Dashboard
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/book" className="cursor-pointer">
+                    <Activity className="w-4 h-4 mr-2" />
+                    Book Appointment
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="cursor-pointer text-red-600 focus:text-red-600"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
-            <Link
-              href="/register"
-              className="inline-flex items-center justify-center rounded-md text-sm font-semibold h-9 px-4 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
-              Book Appointment
-            </Link>
+            <>
+              <Link
+                href="/login"
+                className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 text-foreground hover:bg-muted transition-colors"
+              >
+                <LogIn className="w-4 h-4 mr-1.5" />
+                Log in
+              </Link>
+              <Link
+                href="/register"
+                className="inline-flex items-center justify-center rounded-md text-sm font-semibold h-9 px-4 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+              >
+                Sign up
+              </Link>
+            </>
           )}
         </div>
 
@@ -89,10 +164,29 @@ export function Navbar() {
                 <Activity className="w-4 h-4" />
               </div>
               <div>
-                <span className="text-base font-bold text-foreground block leading-tight">TelePhysio</span>
-                <span className="text-[11px] text-muted-foreground">Sri Guru Granth Sahib World University</span>
+                <span className="text-base font-bold text-foreground block leading-tight">
+                  TelePhysio
+                </span>
+                <span className="text-[11px] text-muted-foreground">
+                  Sri Guru Granth Sahib World University
+                </span>
               </div>
             </div>
+
+            {user && (
+              <div className="flex items-center gap-3 px-4 py-3 mb-3 rounded-lg bg-muted">
+                <div className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">
+                  {getInitials(user.name)}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-semibold text-foreground truncate">
+                    {user.name}
+                  </div>
+                  <div className="text-[11px] text-muted-foreground">Signed in</div>
+                </div>
+              </div>
+            )}
+
             <nav className="flex flex-col gap-1 overflow-y-auto">
               {NAV_LINKS.map((link) => (
                 <Link
@@ -100,7 +194,8 @@ export function Navbar() {
                   href={link.href}
                   onClick={() => setIsOpen(false)}
                   className={`px-4 py-2.5 rounded-lg text-[15px] font-medium transition-colors ${
-                    location === link.href || (link.href !== "/" && location.startsWith(link.href))
+                    location === link.href ||
+                    (link.href !== "/" && location.startsWith(link.href))
                       ? "bg-primary/10 text-primary font-semibold"
                       : "text-foreground hover:bg-muted"
                   }`}
@@ -108,24 +203,53 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
-            </nav>
-            <div className="mt-auto pb-6 pt-4 border-t border-border">
-              {patientId ? (
+              {user && (
                 <Link
                   href="/dashboard"
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center rounded-md text-sm font-semibold h-11 bg-primary text-primary-foreground hover:bg-primary/90 w-full transition-colors"
+                  className="px-4 py-2.5 rounded-lg text-[15px] font-medium text-foreground hover:bg-muted"
                 >
                   My Dashboard
                 </Link>
+              )}
+            </nav>
+
+            <div className="mt-auto pb-6 pt-4 border-t border-border space-y-2">
+              {user ? (
+                <>
+                  <Link
+                    href="/book"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-center rounded-md text-sm font-semibold h-11 bg-primary text-primary-foreground hover:bg-primary/90 w-full transition-colors"
+                  >
+                    Book Appointment
+                  </Link>
+                  <Button
+                    variant="outline"
+                    className="w-full h-11 gap-2"
+                    onClick={handleLogout}
+                  >
+                    <LogOut className="w-4 h-4" />
+                    Sign out
+                  </Button>
+                </>
               ) : (
-                <Link
-                  href="/register"
-                  onClick={() => setIsOpen(false)}
-                  className="flex items-center justify-center rounded-md text-sm font-semibold h-11 bg-primary text-primary-foreground hover:bg-primary/90 w-full transition-colors"
-                >
-                  Book Appointment
-                </Link>
+                <>
+                  <Link
+                    href="/register"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-center rounded-md text-sm font-semibold h-11 bg-primary text-primary-foreground hover:bg-primary/90 w-full transition-colors"
+                  >
+                    Create account
+                  </Link>
+                  <Link
+                    href="/login"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-center rounded-md text-sm font-medium h-11 border border-border w-full transition-colors hover:bg-muted"
+                  >
+                    Log in
+                  </Link>
+                </>
               )}
             </div>
           </SheetContent>

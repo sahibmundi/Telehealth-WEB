@@ -93,6 +93,10 @@ export interface Patient {
   /** @nullable */
   gender: string | null;
   /** @nullable */
+  occupation: string | null;
+  /** @nullable */
+  fees: string | null;
+  /** @nullable */
   chiefComplaint: string | null;
   /** @nullable */
   medicalHistory: string | null;
@@ -100,6 +104,37 @@ export interface Patient {
   painIntensity: number | null;
   consentGiven: boolean;
   createdAt: string;
+}
+
+export interface AuthSignupBody {
+  name: string;
+  email: string;
+  phone: string;
+  /** @minLength 6 */
+  password: string;
+  /** @nullable */
+  age?: number | null;
+  /** @nullable */
+  gender?: string | null;
+  /** @nullable */
+  occupation?: string | null;
+  /** @nullable */
+  fees?: string | null;
+  consentGiven: boolean;
+}
+
+export interface AuthLoginBody {
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  patient: Patient;
+}
+
+export interface AuthError {
+  error: string;
 }
 
 export interface CreatePatientBody {

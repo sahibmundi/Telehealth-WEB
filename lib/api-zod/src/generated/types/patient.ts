@@ -16,6 +16,10 @@ export interface Patient {
   /** @nullable */
   gender: string | null;
   /** @nullable */
+  occupation: string | null;
+  /** @nullable */
+  fees: string | null;
+  /** @nullable */
   chiefComplaint: string | null;
   /** @nullable */
   medicalHistory: string | null;

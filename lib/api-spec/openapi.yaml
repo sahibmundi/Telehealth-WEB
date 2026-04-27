@@ -24,7 +24,84 @@ tags:
     description: Service information
   - name: enquiries
     description: General enquiries
+  - name: auth
+    description: Authentication (signup, login, current user)
 paths:
+  /auth/signup:
+    post:
+      operationId: authSignup
+      tags: [auth]
+      summary: Create a new account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthSignupBody"
+      responses:
+        "201":
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthError"
+        "409":
+          description: Email already registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthError"
+
+  /auth/login:
+    post:
+      operationId: authLogin
+      tags: [auth]
+      summary: Log in with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthLoginBody"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthError"
+
+  /auth/me:
+    get:
+      operationId: authMe
+      tags: [auth]
+      summary: Get the currently authenticated patient
+      responses:
+        "200":
+          description: Current patient
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Patient"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthError"
+
   /healthz:
     get:
       operationId: healthCheck
@@ -561,6 +638,10 @@ components:
           type: ["integer", "null"]
         gender:
           type: ["string", "null"]
+        occupation:
+          type: ["string", "null"]
+        fees:
+          type: ["string", "null"]
         chiefComplaint:
           type: ["string", "null"]
         medicalHistory:
@@ -578,11 +659,72 @@ components:
         - phone
         - age
         - gender
+        - occupation
+        - fees
         - chiefComplaint
         - medicalHistory
         - painIntensity
         - consentGiven
         - createdAt
+
+    AuthSignupBody:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        password:
+          type: string
+          minLength: 6
+        age:
+          type: ["integer", "null"]
+        gender:
+          type: ["string", "null"]
+        occupation:
+          type: ["string", "null"]
+        fees:
+          type: ["string", "null"]
+        consentGiven:
+          type: boolean
+      required:
+        - name
+        - email
+        - phone
+        - password
+        - consentGiven
+
+    AuthLoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        patient:
+          $ref: "#/components/schemas/Patient"
+      required:
+        - token
+        - patient
+
+    AuthError:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
 
     CreatePatientBody:
       type: object

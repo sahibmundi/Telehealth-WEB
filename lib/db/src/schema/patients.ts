@@ -14,6 +14,7 @@ export const patientsTable = pgTable("patients", {
   painIntensity: integer("pain_intensity"),
   occupation: text("occupation"),
   fees: text("fees"),
+  passwordHash: text("password_hash"),
   consentGiven: boolean("consent_given").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),

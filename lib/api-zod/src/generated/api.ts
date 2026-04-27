@@ -8,6 +8,69 @@
 import * as zod from "zod";
 
 /**
+ * @summary Create a new account
+ */
+export const authSignupBodyPasswordMin = 6;
+
+export const AuthSignupBody = zod.object({
+  name: zod.string(),
+  email: zod.string(),
+  phone: zod.string(),
+  password: zod.string().min(authSignupBodyPasswordMin),
+  age: zod.number().nullish(),
+  gender: zod.string().nullish(),
+  occupation: zod.string().nullish(),
+  fees: zod.string().nullish(),
+  consentGiven: zod.boolean(),
+});
+
+/**
+ * @summary Log in with email and password
+ */
+export const AuthLoginBody = zod.object({
+  email: zod.string(),
+  password: zod.string(),
+});
+
+export const AuthLoginResponse = zod.object({
+  token: zod.string(),
+  patient: zod.object({
+    id: zod.number(),
+    name: zod.string(),
+    email: zod.string(),
+    phone: zod.string(),
+    age: zod.number().nullable(),
+    gender: zod.string().nullable(),
+    occupation: zod.string().nullable(),
+    fees: zod.string().nullable(),
+    chiefComplaint: zod.string().nullable(),
+    medicalHistory: zod.string().nullable(),
+    painIntensity: zod.number().nullable(),
+    consentGiven: zod.boolean(),
+    createdAt: zod.string(),
+  }),
+});
+
+/**
+ * @summary Get the currently authenticated patient
+ */
+export const AuthMeResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  email: zod.string(),
+  phone: zod.string(),
+  age: zod.number().nullable(),
+  gender: zod.string().nullable(),
+  occupation: zod.string().nullable(),
+  fees: zod.string().nullable(),
+  chiefComplaint: zod.string().nullable(),
+  medicalHistory: zod.string().nullable(),
+  painIntensity: zod.number().nullable(),
+  consentGiven: zod.boolean(),
+  createdAt: zod.string(),
+});
+
+/**
  * Returns server health status
  * @summary Health check
  */
@@ -132,6 +195,8 @@ export const ListPatientsResponseItem = zod.object({
   phone: zod.string(),
   age: zod.number().nullable(),
   gender: zod.string().nullable(),
+  occupation: zod.string().nullable(),
+  fees: zod.string().nullable(),
   chiefComplaint: zod.string().nullable(),
   medicalHistory: zod.string().nullable(),
   painIntensity: zod.number().nullable(),
@@ -169,6 +234,8 @@ export const GetPatientResponse = zod.object({
   phone: zod.string(),
   age: zod.number().nullable(),
   gender: zod.string().nullable(),
+  occupation: zod.string().nullable(),
+  fees: zod.string().nullable(),
   chiefComplaint: zod.string().nullable(),
   medicalHistory: zod.string().nullable(),
   painIntensity: zod.number().nullable(),
@@ -200,6 +267,8 @@ export const UpdatePatientResponse = zod.object({
   phone: zod.string(),
   age: zod.number().nullable(),
   gender: zod.string().nullable(),
+  occupation: zod.string().nullable(),
+  fees: zod.string().nullable(),
   chiefComplaint: zod.string().nullable(),
   medicalHistory: zod.string().nullable(),
   painIntensity: zod.number().nullable(),
