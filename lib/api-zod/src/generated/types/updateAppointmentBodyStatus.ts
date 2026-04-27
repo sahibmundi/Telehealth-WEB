@@ -16,6 +16,7 @@ export type UpdateAppointmentBodyStatus =
 export const UpdateAppointmentBodyStatus = {
   pending: "pending",
   confirmed: "confirmed",
+  rejected: "rejected",
   completed: "completed",
   cancelled: "cancelled",
 } as const;

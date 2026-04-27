@@ -26,6 +26,8 @@ tags:
     description: General enquiries
   - name: auth
     description: Authentication (signup, login, current user)
+  - name: admin
+    description: Admin operations (approve/reject appointment requests)
 paths:
   /auth/signup:
     post:
@@ -95,6 +97,50 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Patient"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthError"
+
+  /admin/login:
+    post:
+      operationId: adminLogin
+      tags: [admin]
+      summary: Log in as the site administrator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminLoginBody"
+      responses:
+        "200":
+          description: Admin logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthError"
+
+  /admin/me:
+    get:
+      operationId: adminMe
+      tags: [admin]
+      summary: Get the current admin session
+      responses:
+        "200":
+          description: Admin info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminInfo"
         "401":
           description: Not authenticated
           content:
@@ -533,19 +579,27 @@ components:
         serviceType:
           type: string
         sessionDate:
-          type: string
+          type: ["string", "null"]
         sessionTime:
-          type: string
+          type: ["string", "null"]
         duration:
           type: integer
         status:
           type: string
-          enum: [pending, confirmed, completed, cancelled]
+          enum: [pending, confirmed, rejected, completed, cancelled]
         sessionLink:
           type: ["string", "null"]
         physiotherapist:
           type: ["string", "null"]
         notes:
+          type: ["string", "null"]
+        preferredDate:
+          type: ["string", "null"]
+        preferredTimeOfDay:
+          type: ["string", "null"]
+        reason:
+          type: ["string", "null"]
+        rejectionReason:
           type: ["string", "null"]
         createdAt:
           type: string
@@ -561,6 +615,10 @@ components:
         - sessionLink
         - physiotherapist
         - notes
+        - preferredDate
+        - preferredTimeOfDay
+        - reason
+        - rejectionReason
         - createdAt
 
     CreateAppointmentBody:
@@ -572,22 +630,22 @@ components:
           type: string
         serviceType:
           type: string
-        sessionDate:
-          type: string
-        sessionTime:
-          type: string
         duration:
           type: integer
         physiotherapist:
           type: ["string", "null"]
         notes:
           type: ["string", "null"]
+        preferredDate:
+          type: ["string", "null"]
+        preferredTimeOfDay:
+          type: ["string", "null"]
+        reason:
+          type: ["string", "null"]
       required:
         - patientId
         - patientName
         - serviceType
-        - sessionDate
-        - sessionTime
         - duration
 
     UpdateAppointmentBody:
@@ -595,12 +653,18 @@ components:
       properties:
         status:
           type: ["string", "null"]
-          enum: [pending, confirmed, completed, cancelled, null]
+          enum: [pending, confirmed, rejected, completed, cancelled, null]
         sessionLink:
           type: ["string", "null"]
         physiotherapist:
           type: ["string", "null"]
         notes:
+          type: ["string", "null"]
+        sessionDate:
+          type: ["string", "null"]
+        sessionTime:
+          type: ["string", "null"]
+        rejectionReason:
           type: ["string", "null"]
 
     AppointmentSummary:
@@ -612,6 +676,8 @@ components:
           type: integer
         confirmed:
           type: integer
+        rejected:
+          type: integer
         completed:
           type: integer
         cancelled:
@@ -620,6 +686,7 @@ components:
         - total
         - pending
         - confirmed
+        - rejected
         - completed
         - cancelled
 
@@ -725,6 +792,39 @@ components:
           type: string
       required:
         - error
+
+    AdminLoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    AdminInfo:
+      type: object
+      properties:
+        email:
+          type: string
+        name:
+          type: string
+      required:
+        - email
+        - name
+
+    AdminAuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        admin:
+          $ref: "#/components/schemas/AdminInfo"
+      required:
+        - token
+        - admin
 
     CreatePatientBody:
       type: object

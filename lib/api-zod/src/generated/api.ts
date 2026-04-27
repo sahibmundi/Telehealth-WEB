@@ -71,6 +71,30 @@ export const AuthMeResponse = zod.object({
 });
 
 /**
+ * @summary Log in as the site administrator
+ */
+export const AdminLoginBody = zod.object({
+  email: zod.string(),
+  password: zod.string(),
+});
+
+export const AdminLoginResponse = zod.object({
+  token: zod.string(),
+  admin: zod.object({
+    email: zod.string(),
+    name: zod.string(),
+  }),
+});
+
+/**
+ * @summary Get the current admin session
+ */
+export const AdminMeResponse = zod.object({
+  email: zod.string(),
+  name: zod.string(),
+});
+
+/**
  * Returns server health status
  * @summary Health check
  */
@@ -90,13 +114,23 @@ export const ListAppointmentsResponseItem = zod.object({
   patientId: zod.number(),
   patientName: zod.string(),
   serviceType: zod.string(),
-  sessionDate: zod.string(),
-  sessionTime: zod.string(),
+  sessionDate: zod.string().nullable(),
+  sessionTime: zod.string().nullable(),
   duration: zod.number(),
-  status: zod.enum(["pending", "confirmed", "completed", "cancelled"]),
+  status: zod.enum([
+    "pending",
+    "confirmed",
+    "rejected",
+    "completed",
+    "cancelled",
+  ]),
   sessionLink: zod.string().nullable(),
   physiotherapist: zod.string().nullable(),
   notes: zod.string().nullable(),
+  preferredDate: zod.string().nullable(),
+  preferredTimeOfDay: zod.string().nullable(),
+  reason: zod.string().nullable(),
+  rejectionReason: zod.string().nullable(),
   createdAt: zod.string(),
 });
 export const ListAppointmentsResponse = zod.array(ListAppointmentsResponseItem);
@@ -108,11 +142,12 @@ export const CreateAppointmentBody = zod.object({
   patientId: zod.number(),
   patientName: zod.string(),
   serviceType: zod.string(),
-  sessionDate: zod.string(),
-  sessionTime: zod.string(),
   duration: zod.number(),
   physiotherapist: zod.string().nullish(),
   notes: zod.string().nullish(),
+  preferredDate: zod.string().nullish(),
+  preferredTimeOfDay: zod.string().nullish(),
+  reason: zod.string().nullish(),
 });
 
 /**
@@ -127,13 +162,23 @@ export const GetAppointmentResponse = zod.object({
   patientId: zod.number(),
   patientName: zod.string(),
   serviceType: zod.string(),
-  sessionDate: zod.string(),
-  sessionTime: zod.string(),
+  sessionDate: zod.string().nullable(),
+  sessionTime: zod.string().nullable(),
   duration: zod.number(),
-  status: zod.enum(["pending", "confirmed", "completed", "cancelled"]),
+  status: zod.enum([
+    "pending",
+    "confirmed",
+    "rejected",
+    "completed",
+    "cancelled",
+  ]),
   sessionLink: zod.string().nullable(),
   physiotherapist: zod.string().nullable(),
   notes: zod.string().nullable(),
+  preferredDate: zod.string().nullable(),
+  preferredTimeOfDay: zod.string().nullable(),
+  reason: zod.string().nullable(),
+  rejectionReason: zod.string().nullable(),
   createdAt: zod.string(),
 });
 
@@ -149,6 +194,7 @@ export const UpdateAppointmentBody = zod.object({
     .union([
       zod.literal("pending"),
       zod.literal("confirmed"),
+      zod.literal("rejected"),
       zod.literal("completed"),
       zod.literal("cancelled"),
       zod.literal(null),
@@ -157,6 +203,9 @@ export const UpdateAppointmentBody = zod.object({
   sessionLink: zod.string().nullish(),
   physiotherapist: zod.string().nullish(),
   notes: zod.string().nullish(),
+  sessionDate: zod.string().nullish(),
+  sessionTime: zod.string().nullish(),
+  rejectionReason: zod.string().nullish(),
 });
 
 export const UpdateAppointmentResponse = zod.object({
@@ -164,13 +213,23 @@ export const UpdateAppointmentResponse = zod.object({
   patientId: zod.number(),
   patientName: zod.string(),
   serviceType: zod.string(),
-  sessionDate: zod.string(),
-  sessionTime: zod.string(),
+  sessionDate: zod.string().nullable(),
+  sessionTime: zod.string().nullable(),
   duration: zod.number(),
-  status: zod.enum(["pending", "confirmed", "completed", "cancelled"]),
+  status: zod.enum([
+    "pending",
+    "confirmed",
+    "rejected",
+    "completed",
+    "cancelled",
+  ]),
   sessionLink: zod.string().nullable(),
   physiotherapist: zod.string().nullable(),
   notes: zod.string().nullable(),
+  preferredDate: zod.string().nullable(),
+  preferredTimeOfDay: zod.string().nullable(),
+  reason: zod.string().nullable(),
+  rejectionReason: zod.string().nullable(),
   createdAt: zod.string(),
 });
 
@@ -181,6 +240,7 @@ export const GetAppointmentSummaryResponse = zod.object({
   total: zod.number(),
   pending: zod.number(),
   confirmed: zod.number(),
+  rejected: zod.number(),
   completed: zod.number(),
   cancelled: zod.number(),
 });

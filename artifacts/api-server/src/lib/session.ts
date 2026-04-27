@@ -27,6 +27,12 @@ export interface SessionPayload {
   iat: number;
 }
 
+export interface AdminSessionPayload {
+  admin: true;
+  email: string;
+  iat: number;
+}
+
 export function signSession(patientId: number): string {
   const payload: SessionPayload = {
     patientId,
@@ -46,6 +52,31 @@ export function verifySession(token: string): SessionPayload | null {
     const decoded = JSON.parse(fromBase64url(encoded));
     if (typeof decoded?.patientId !== "number") return null;
     return decoded as SessionPayload;
+  } catch {
+    return null;
+  }
+}
+
+export function signAdminSession(email: string): string {
+  const payload: AdminSessionPayload = {
+    admin: true,
+    email,
+    iat: Math.floor(Date.now() / 1000),
+  };
+  const encoded = base64url(JSON.stringify(payload));
+  return `${encoded}.${sign(encoded)}`;
+}
+
+export function verifyAdminSession(token: string): AdminSessionPayload | null {
+  const parts = token.split(".");
+  if (parts.length !== 2) return null;
+  const [encoded, signature] = parts;
+  if (!encoded || !signature) return null;
+  if (sign(encoded) !== signature) return null;
+  try {
+    const decoded = JSON.parse(fromBase64url(encoded));
+    if (decoded?.admin !== true || typeof decoded?.email !== "string") return null;
+    return decoded as AdminSessionPayload;
   } catch {
     return null;
   }

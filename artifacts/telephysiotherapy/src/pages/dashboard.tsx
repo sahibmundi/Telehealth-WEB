@@ -36,8 +36,17 @@ import {
 const statusColors: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-700 border-yellow-200",
   confirmed: "bg-green-100 text-green-700 border-green-200",
+  rejected: "bg-red-100 text-red-700 border-red-200",
   completed: "bg-primary/10 text-primary border-primary/20",
-  cancelled: "bg-red-100 text-red-700 border-red-200"
+  cancelled: "bg-muted text-muted-foreground border-border"
+}
+
+const statusLabels: Record<string, string> = {
+  pending: "Pending review",
+  confirmed: "Approved",
+  rejected: "Rejected",
+  completed: "Completed",
+  cancelled: "Cancelled"
 };
 
 const BODY_PARTS = [
@@ -259,10 +268,11 @@ export default function Dashboard() {
 
   const [apptForm, setApptForm] = useState({
     serviceType: "Online Consultation",
-    sessionDate: "",
-    sessionTime: "09:00",
+    preferredDate: "",
+    preferredTimeOfDay: "",
     duration: 60,
-    physiotherapist: "Dr. Supreet Bindra"
+    physiotherapist: "Dr. Supreet Bindra",
+    reason: ""
   });
 
   const handleAssessSubmit = (e: React.FormEvent) => {
@@ -314,15 +324,36 @@ export default function Dashboard() {
     e.preventDefault();
     if (!patientId || !patientName) return;
     createAppointment.mutate(
-      { data: { patientId, patientName, serviceType: apptForm.serviceType, sessionDate: apptForm.sessionDate, sessionTime: apptForm.sessionTime, duration: apptForm.duration, physiotherapist: apptForm.physiotherapist } },
+      {
+        data: {
+          patientId,
+          patientName,
+          serviceType: apptForm.serviceType,
+          duration: apptForm.duration,
+          physiotherapist: apptForm.physiotherapist || null,
+          preferredDate: apptForm.preferredDate || null,
+          preferredTimeOfDay: apptForm.preferredTimeOfDay || null,
+          reason: apptForm.reason.trim() || null,
+        },
+      },
       {
         onSuccess: () => {
-          toast({ title: "Appointment booked", description: "We will confirm your slot shortly." });
-          setApptForm({ serviceType: "Online Consultation", sessionDate: "", sessionTime: "09:00", duration: 60, physiotherapist: "Dr. Supreet Bindra" });
+          toast({
+            title: "Appointment requested",
+            description: "Our team will review and confirm a slot soon.",
+          });
+          setApptForm({
+            serviceType: "Online Consultation",
+            preferredDate: "",
+            preferredTimeOfDay: "",
+            duration: 60,
+            physiotherapist: "Dr. Supreet Bindra",
+            reason: "",
+          });
           queryClient.invalidateQueries({ queryKey: getListAppointmentsQueryKey({ patientId }) });
           queryClient.invalidateQueries({ queryKey: getGetAppointmentSummaryQueryKey() });
         },
-        onError: () => toast({ title: "Error booking appointment", variant: "destructive" })
+        onError: () => toast({ title: "Error sending request", variant: "destructive" })
       }
     );
   };
@@ -382,8 +413,8 @@ export default function Dashboard() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
           {[
             { label: "Total Appointments", value: summary?.total ?? 0, icon: <Calendar className="w-4 h-4 text-primary" /> },
-            { label: "Confirmed", value: summary?.confirmed ?? 0, icon: <CheckCircle2 className="w-4 h-4 text-green-600" /> },
-            { label: "Completed", value: summary?.completed ?? 0, icon: <Activity className="w-4 h-4 text-primary" /> },
+            { label: "Approved", value: summary?.confirmed ?? 0, icon: <CheckCircle2 className="w-4 h-4 text-green-600" /> },
+            { label: "Pending", value: summary?.pending ?? 0, icon: <Clock className="w-4 h-4 text-yellow-600" /> },
             { label: "Assessments", value: assessments?.length ?? 0, icon: <ClipboardList className="w-4 h-4 text-primary" /> }
           ].map((stat, i) => (
             <div key={i} className="bg-card border border-card-border rounded-xl sm:rounded-2xl p-4 sm:p-6">
@@ -445,14 +476,41 @@ export default function Dashboard() {
                             )}
                           </div>
                           <span className={`text-xs font-semibold px-2.5 py-1 rounded-full shrink-0 border ${statusColors[appt.status] ?? "bg-muted text-muted-foreground border-border"}`}>
-                            {appt.status}
+                            {statusLabels[appt.status] ?? appt.status}
                           </span>
                         </div>
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                          <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {appt.sessionDate}</span>
-                          <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {appt.sessionTime}</span>
-                          <span className="flex items-center gap-1"><Activity className="w-3 h-3" /> {appt.duration} min</span>
-                        </div>
+                        {appt.sessionDate && appt.sessionTime ? (
+                          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {appt.sessionDate}</span>
+                            <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {appt.sessionTime}</span>
+                            <span className="flex items-center gap-1"><Activity className="w-3 h-3" /> {appt.duration} min</span>
+                          </div>
+                        ) : (
+                          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                            {appt.preferredDate && (
+                              <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> Preferred: {appt.preferredDate}</span>
+                            )}
+                            {appt.preferredTimeOfDay && (
+                              <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {appt.preferredTimeOfDay}</span>
+                            )}
+                            <span className="flex items-center gap-1"><Activity className="w-3 h-3" /> {appt.duration} min</span>
+                          </div>
+                        )}
+                        {appt.reason && (
+                          <p className="text-xs text-muted-foreground mt-2 italic line-clamp-2">"{appt.reason}"</p>
+                        )}
+                        {appt.status === "rejected" && appt.rejectionReason && (
+                          <div className="mt-3 text-xs text-red-700 bg-red-50 border border-red-100 rounded-lg p-2.5">
+                            <p className="font-semibold mb-0.5">Reason</p>
+                            <p>{appt.rejectionReason}</p>
+                          </div>
+                        )}
+                        {appt.notes && appt.status === "confirmed" && (
+                          <div className="mt-3 text-xs text-foreground bg-muted border border-border rounded-lg p-2.5">
+                            <p className="font-semibold mb-0.5 text-muted-foreground">Notes from team</p>
+                            <p>{appt.notes}</p>
+                          </div>
+                        )}
                         {appt.sessionLink && (
                           <a
                             href={appt.sessionLink}
@@ -475,8 +533,11 @@ export default function Dashboard() {
               </div>
 
               <div>
-                <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">Book New Appointment</h2>
+                <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">Request New Appointment</h2>
                 <div className="bg-card border border-card-border rounded-xl p-5 sm:p-6">
+                  <div className="text-xs text-muted-foreground bg-primary/5 border border-primary/10 rounded-lg p-3 mb-4 leading-relaxed">
+                    Tell us what you need. Our team will confirm a date, time, and video link within 24 hours.
+                  </div>
                   <form onSubmit={handleApptSubmit} className="space-y-4">
                     <div>
                       <Label className="mb-1.5 block text-sm font-medium">Service Type</Label>
@@ -492,23 +553,37 @@ export default function Dashboard() {
                       </Select>
                     </div>
                     <div>
-                      <Label className="mb-1.5 block text-sm font-medium">Physiotherapist</Label>
+                      <Label className="mb-1.5 block text-sm font-medium">Preferred Physiotherapist</Label>
                       <Select value={apptForm.physiotherapist} onValueChange={(v) => setApptForm(f => ({ ...f, physiotherapist: v }))}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="Dr. Supreet Bindra">Dr. Supreet Bindra — Musculoskeletal & Back Pain</SelectItem>
                           <SelectItem value="Dr. Pankajpreet Singh">Dr. Pankajpreet Singh — Neurological Physiotherapy</SelectItem>
+                          <SelectItem value="No preference">No preference</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <Label className="mb-1.5 block text-sm font-medium">Date</Label>
-                        <Input type="date" value={apptForm.sessionDate} onChange={(e) => setApptForm(f => ({ ...f, sessionDate: e.target.value }))} required min={new Date().toISOString().split("T")[0]} />
+                        <Label className="mb-1.5 block text-sm font-medium">Preferred Date</Label>
+                        <Input
+                          type="date"
+                          value={apptForm.preferredDate}
+                          onChange={(e) => setApptForm(f => ({ ...f, preferredDate: e.target.value }))}
+                          min={new Date().toISOString().split("T")[0]}
+                        />
                       </div>
                       <div>
-                        <Label className="mb-1.5 block text-sm font-medium">Time</Label>
-                        <Input type="time" value={apptForm.sessionTime} onChange={(e) => setApptForm(f => ({ ...f, sessionTime: e.target.value }))} required />
+                        <Label className="mb-1.5 block text-sm font-medium">Time of Day</Label>
+                        <Select value={apptForm.preferredTimeOfDay} onValueChange={(v) => setApptForm(f => ({ ...f, preferredTimeOfDay: v }))}>
+                          <SelectTrigger><SelectValue placeholder="Any" /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Morning (8 AM – 12 PM)">Morning</SelectItem>
+                            <SelectItem value="Afternoon (12 PM – 5 PM)">Afternoon</SelectItem>
+                            <SelectItem value="Evening (5 PM – 8 PM)">Evening</SelectItem>
+                            <SelectItem value="Any time">Any time</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
                     <div>
@@ -523,8 +598,17 @@ export default function Dashboard() {
                         </SelectContent>
                       </Select>
                     </div>
+                    <div>
+                      <Label className="mb-1.5 block text-sm font-medium">What would you like help with?</Label>
+                      <Textarea
+                        rows={3}
+                        placeholder="Briefly describe your symptoms or what you'd like to discuss..."
+                        value={apptForm.reason}
+                        onChange={(e) => setApptForm(f => ({ ...f, reason: e.target.value }))}
+                      />
+                    </div>
                     <Button type="submit" className="w-full" disabled={createAppointment.isPending}>
-                      {createAppointment.isPending ? "Booking..." : "Book Appointment"}
+                      {createAppointment.isPending ? "Sending..." : "Submit Request"}
                     </Button>
                   </form>
                 </div>

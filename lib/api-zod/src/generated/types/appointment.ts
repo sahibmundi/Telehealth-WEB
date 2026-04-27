@@ -12,8 +12,10 @@ export interface Appointment {
   patientId: number;
   patientName: string;
   serviceType: string;
-  sessionDate: string;
-  sessionTime: string;
+  /** @nullable */
+  sessionDate: string | null;
+  /** @nullable */
+  sessionTime: string | null;
   duration: number;
   status: AppointmentStatus;
   /** @nullable */
@@ -22,5 +24,13 @@ export interface Appointment {
   physiotherapist: string | null;
   /** @nullable */
   notes: string | null;
+  /** @nullable */
+  preferredDate: string | null;
+  /** @nullable */
+  preferredTimeOfDay: string | null;
+  /** @nullable */
+  reason: string | null;
+  /** @nullable */
+  rejectionReason: string | null;
   createdAt: string;
 }

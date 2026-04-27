@@ -16,4 +16,10 @@ export interface UpdateAppointmentBody {
   physiotherapist?: string | null;
   /** @nullable */
   notes?: string | null;
+  /** @nullable */
+  sessionDate?: string | null;
+  /** @nullable */
+  sessionTime?: string | null;
+  /** @nullable */
+  rejectionReason?: string | null;
 }

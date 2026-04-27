@@ -15,6 +15,7 @@ export type AppointmentStatus =
 export const AppointmentStatus = {
   pending: "pending",
   confirmed: "confirmed",
+  rejected: "rejected",
   completed: "completed",
   cancelled: "cancelled",
 } as const;
@@ -24,8 +25,10 @@ export interface Appointment {
   patientId: number;
   patientName: string;
   serviceType: string;
-  sessionDate: string;
-  sessionTime: string;
+  /** @nullable */
+  sessionDate: string | null;
+  /** @nullable */
+  sessionTime: string | null;
   duration: number;
   status: AppointmentStatus;
   /** @nullable */
@@ -34,6 +37,14 @@ export interface Appointment {
   physiotherapist: string | null;
   /** @nullable */
   notes: string | null;
+  /** @nullable */
+  preferredDate: string | null;
+  /** @nullable */
+  preferredTimeOfDay: string | null;
+  /** @nullable */
+  reason: string | null;
+  /** @nullable */
+  rejectionReason: string | null;
   createdAt: string;
 }
 
@@ -41,13 +52,17 @@ export interface CreateAppointmentBody {
   patientId: number;
   patientName: string;
   serviceType: string;
-  sessionDate: string;
-  sessionTime: string;
   duration: number;
   /** @nullable */
   physiotherapist?: string | null;
   /** @nullable */
   notes?: string | null;
+  /** @nullable */
+  preferredDate?: string | null;
+  /** @nullable */
+  preferredTimeOfDay?: string | null;
+  /** @nullable */
+  reason?: string | null;
 }
 
 /**
@@ -60,6 +75,7 @@ export type UpdateAppointmentBodyStatus =
 export const UpdateAppointmentBodyStatus = {
   pending: "pending",
   confirmed: "confirmed",
+  rejected: "rejected",
   completed: "completed",
   cancelled: "cancelled",
 } as const;
@@ -73,12 +89,19 @@ export interface UpdateAppointmentBody {
   physiotherapist?: string | null;
   /** @nullable */
   notes?: string | null;
+  /** @nullable */
+  sessionDate?: string | null;
+  /** @nullable */
+  sessionTime?: string | null;
+  /** @nullable */
+  rejectionReason?: string | null;
 }
 
 export interface AppointmentSummary {
   total: number;
   pending: number;
   confirmed: number;
+  rejected: number;
   completed: number;
   cancelled: number;
 }
@@ -135,6 +158,21 @@ export interface AuthResponse {
 
 export interface AuthError {
   error: string;
+}
+
+export interface AdminLoginBody {
+  email: string;
+  password: string;
+}
+
+export interface AdminInfo {
+  email: string;
+  name: string;
+}
+
+export interface AdminAuthResponse {
+  token: string;
+  admin: AdminInfo;
 }
 
 export interface CreatePatientBody {

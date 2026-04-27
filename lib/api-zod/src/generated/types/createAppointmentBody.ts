@@ -10,11 +10,15 @@ export interface CreateAppointmentBody {
   patientId: number;
   patientName: string;
   serviceType: string;
-  sessionDate: string;
-  sessionTime: string;
   duration: number;
   /** @nullable */
   physiotherapist?: string | null;
   /** @nullable */
   notes?: string | null;
+  /** @nullable */
+  preferredDate?: string | null;
+  /** @nullable */
+  preferredTimeOfDay?: string | null;
+  /** @nullable */
+  reason?: string | null;
 }

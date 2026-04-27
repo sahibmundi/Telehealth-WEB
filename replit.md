@@ -41,3 +41,21 @@ Patient login/signup uses an HMAC-signed bearer token (custom, no JWT lib).
 - Passwords are hashed with `bcryptjs` and stored on `patients.password_hash` (see `lib/db/src/schema/patients.ts`).
 - Frontend state lives in `artifacts/telephysiotherapy/src/hooks/use-auth.tsx` (`AuthProvider` + `useAuth`). The token is kept in `localStorage` under `auth_token`; the provider also mirrors `patientId` and `patientName` for legacy pages.
 - Pages: `/login`, `/register`, `/dashboard`, `/book`. Booking is gated behind login.
+
+## Appointment request flow
+
+Patients **request** appointments — they don't pick a fixed date/time themselves. The admin reviews each request and either approves it (with a confirmed date, time, and video link) or rejects it (with an optional reason).
+
+- DB columns on `appointments` (see `lib/db/src/schema/appointments.ts`): `session_date` and `session_time` are nullable until approved. `preferred_date`, `preferred_time_of_day`, `reason`, and `rejection_reason` are new optional fields.
+- Status enum: `pending` → `confirmed` (approved) | `rejected` → optionally `completed`/`cancelled`. The dashboard displays "confirmed" as **Approved**.
+- `POST /api/appointments` always creates a `pending` request — it ignores any client-supplied date/time.
+- `PATCH /api/appointments/{id}` requires an admin bearer token if it touches any of: `status`, `sessionLink`, `physiotherapist`, `sessionDate`, `sessionTime`, `rejectionReason`, `notes`.
+- Patient pages `/book` (multi-step) and `/dashboard` (sidebar form) submit a request with optional `preferredDate`, `preferredTimeOfDay`, `reason`. The dashboard shows the approved schedule + video link or a rejection reason once the admin acts.
+
+## Admin panel
+
+- Endpoints: `POST /api/admin/login`, `GET /api/admin/me` (in `artifacts/api-server/src/routes/admin.ts`).
+- Auth uses an HMAC-signed admin token (separate from patient sessions). Helpers `signAdminSession` / `verifyAdminSession` live in `artifacts/api-server/src/lib/session.ts`.
+- Admin credentials come from env: `ADMIN_EMAIL` (default `admin@telephysio.com`), `ADMIN_PASSWORD` (default `admin123`), `ADMIN_NAME` (default `TelePhysio Admin`). Override via secrets in production.
+- Frontend: `/admin/login` and `/admin` pages. Token is stored in `localStorage` under `admin_token` and managed by `AdminAuthProvider` / `useAdminAuth` (`src/hooks/use-admin-auth.tsx`). A small **Staff Login** link sits in the site footer.
+- The admin dashboard tabs Pending / Approved / Rejected / Completed appointment requests, plus a Patients tab. Approve and Reject open dialogs that PATCH the appointment with the admin token.

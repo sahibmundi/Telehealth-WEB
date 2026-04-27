@@ -6,6 +6,9 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./adminAuthResponse";
+export * from "./adminInfo";
+export * from "./adminLoginBody";
 export * from "./appointment";
 export * from "./appointmentStatus";
 export * from "./appointmentSummary";

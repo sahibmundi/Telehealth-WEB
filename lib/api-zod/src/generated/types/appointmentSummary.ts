@@ -10,6 +10,7 @@ export interface AppointmentSummary {
   total: number;
   pending: number;
   confirmed: number;
+  rejected: number;
   completed: number;
   cancelled: number;
 }
