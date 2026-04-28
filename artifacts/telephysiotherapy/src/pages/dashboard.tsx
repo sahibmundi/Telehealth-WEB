@@ -268,8 +268,8 @@ export default function Dashboard() {
 
   const [apptForm, setApptForm] = useState({
     serviceType: "Online Consultation",
+    sessionMode: "online",
     preferredDate: "",
-    preferredTimeOfDay: "",
     duration: 60,
     physiotherapist: "Dr. Supreet Bindra",
     reason: ""
@@ -332,7 +332,7 @@ export default function Dashboard() {
           duration: apptForm.duration,
           physiotherapist: apptForm.physiotherapist || null,
           preferredDate: apptForm.preferredDate || null,
-          preferredTimeOfDay: apptForm.preferredTimeOfDay || null,
+          sessionMode: apptForm.sessionMode || null,
           reason: apptForm.reason.trim() || null,
         },
       },
@@ -340,12 +340,12 @@ export default function Dashboard() {
         onSuccess: () => {
           toast({
             title: "Appointment requested",
-            description: "Our team will review and confirm a slot soon.",
+            description: "Our team will confirm a slot and notify you by email and SMS.",
           });
           setApptForm({
             serviceType: "Online Consultation",
+            sessionMode: "online",
             preferredDate: "",
-            preferredTimeOfDay: "",
             duration: 60,
             physiotherapist: "Dr. Supreet Bindra",
             reason: "",
@@ -490,8 +490,10 @@ export default function Dashboard() {
                             {appt.preferredDate && (
                               <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> Preferred: {appt.preferredDate}</span>
                             )}
-                            {appt.preferredTimeOfDay && (
-                              <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {appt.preferredTimeOfDay}</span>
+                            {appt.sessionMode && (
+                              <span className="flex items-center gap-1 capitalize">
+                                {appt.sessionMode === "in-person" ? "In-person" : "Online"}
+                              </span>
                             )}
                             <span className="flex items-center gap-1"><Activity className="w-3 h-3" /> {appt.duration} min</span>
                           </div>
@@ -553,6 +555,16 @@ export default function Dashboard() {
                       </Select>
                     </div>
                     <div>
+                      <Label className="mb-1.5 block text-sm font-medium">Session Mode</Label>
+                      <Select value={apptForm.sessionMode} onValueChange={(v) => setApptForm(f => ({ ...f, sessionMode: v }))}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="online">Online (Video Consultation)</SelectItem>
+                          <SelectItem value="in-person">In-Person (Clinic Visit)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
                       <Label className="mb-1.5 block text-sm font-medium">Preferred Physiotherapist</Label>
                       <Select value={apptForm.physiotherapist} onValueChange={(v) => setApptForm(f => ({ ...f, physiotherapist: v }))}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
@@ -563,28 +575,17 @@ export default function Dashboard() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <Label className="mb-1.5 block text-sm font-medium">Preferred Date</Label>
-                        <Input
-                          type="date"
-                          value={apptForm.preferredDate}
-                          onChange={(e) => setApptForm(f => ({ ...f, preferredDate: e.target.value }))}
-                          min={new Date().toISOString().split("T")[0]}
-                        />
-                      </div>
-                      <div>
-                        <Label className="mb-1.5 block text-sm font-medium">Time of Day</Label>
-                        <Select value={apptForm.preferredTimeOfDay} onValueChange={(v) => setApptForm(f => ({ ...f, preferredTimeOfDay: v }))}>
-                          <SelectTrigger><SelectValue placeholder="Any" /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Morning (8 AM – 12 PM)">Morning</SelectItem>
-                            <SelectItem value="Afternoon (12 PM – 5 PM)">Afternoon</SelectItem>
-                            <SelectItem value="Evening (5 PM – 8 PM)">Evening</SelectItem>
-                            <SelectItem value="Any time">Any time</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+                    <div>
+                      <Label className="mb-1.5 block text-sm font-medium">Preferred Date</Label>
+                      <Input
+                        type="date"
+                        value={apptForm.preferredDate}
+                        onChange={(e) => setApptForm(f => ({ ...f, preferredDate: e.target.value }))}
+                        min={new Date().toISOString().split("T")[0]}
+                      />
+                      <p className="text-[11px] text-muted-foreground mt-1.5">
+                        Our care team will pick the best time within clinic hours and confirm with you.
+                      </p>
                     </div>
                     <div>
                       <Label className="mb-1.5 block text-sm font-medium">Session Duration</Label>

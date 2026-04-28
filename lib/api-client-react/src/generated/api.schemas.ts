@@ -40,9 +40,9 @@ export interface Appointment {
   /** @nullable */
   preferredDate: string | null;
   /** @nullable */
-  preferredTimeOfDay: string | null;
-  /** @nullable */
   reason: string | null;
+  /** @nullable */
+  sessionMode: string | null;
   /** @nullable */
   rejectionReason: string | null;
   createdAt: string;
@@ -60,9 +60,9 @@ export interface CreateAppointmentBody {
   /** @nullable */
   preferredDate?: string | null;
   /** @nullable */
-  preferredTimeOfDay?: string | null;
-  /** @nullable */
   reason?: string | null;
+  /** @nullable */
+  sessionMode?: string | null;
 }
 
 /**

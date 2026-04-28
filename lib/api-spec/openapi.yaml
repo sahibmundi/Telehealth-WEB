@@ -595,9 +595,9 @@ components:
           type: ["string", "null"]
         preferredDate:
           type: ["string", "null"]
-        preferredTimeOfDay:
-          type: ["string", "null"]
         reason:
+          type: ["string", "null"]
+        sessionMode:
           type: ["string", "null"]
         rejectionReason:
           type: ["string", "null"]
@@ -616,8 +616,8 @@ components:
         - physiotherapist
         - notes
         - preferredDate
-        - preferredTimeOfDay
         - reason
+        - sessionMode
         - rejectionReason
         - createdAt
 
@@ -638,9 +638,9 @@ components:
           type: ["string", "null"]
         preferredDate:
           type: ["string", "null"]
-        preferredTimeOfDay:
-          type: ["string", "null"]
         reason:
+          type: ["string", "null"]
+        sessionMode:
           type: ["string", "null"]
       required:
         - patientId

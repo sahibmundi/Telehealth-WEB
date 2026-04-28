@@ -128,8 +128,8 @@ export const ListAppointmentsResponseItem = zod.object({
   physiotherapist: zod.string().nullable(),
   notes: zod.string().nullable(),
   preferredDate: zod.string().nullable(),
-  preferredTimeOfDay: zod.string().nullable(),
   reason: zod.string().nullable(),
+  sessionMode: zod.string().nullable(),
   rejectionReason: zod.string().nullable(),
   createdAt: zod.string(),
 });
@@ -146,8 +146,8 @@ export const CreateAppointmentBody = zod.object({
   physiotherapist: zod.string().nullish(),
   notes: zod.string().nullish(),
   preferredDate: zod.string().nullish(),
-  preferredTimeOfDay: zod.string().nullish(),
   reason: zod.string().nullish(),
+  sessionMode: zod.string().nullish(),
 });
 
 /**
@@ -176,8 +176,8 @@ export const GetAppointmentResponse = zod.object({
   physiotherapist: zod.string().nullable(),
   notes: zod.string().nullable(),
   preferredDate: zod.string().nullable(),
-  preferredTimeOfDay: zod.string().nullable(),
   reason: zod.string().nullable(),
+  sessionMode: zod.string().nullable(),
   rejectionReason: zod.string().nullable(),
   createdAt: zod.string(),
 });
@@ -227,8 +227,8 @@ export const UpdateAppointmentResponse = zod.object({
   physiotherapist: zod.string().nullable(),
   notes: zod.string().nullable(),
   preferredDate: zod.string().nullable(),
-  preferredTimeOfDay: zod.string().nullable(),
   reason: zod.string().nullable(),
+  sessionMode: zod.string().nullable(),
   rejectionReason: zod.string().nullable(),
   createdAt: zod.string(),
 });

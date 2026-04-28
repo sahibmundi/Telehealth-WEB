@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { eq, sql, desc } from "drizzle-orm";
-import { db, appointmentsTable } from "@workspace/db";
+import { db, appointmentsTable, patientsTable } from "@workspace/db";
 import {
   ListAppointmentsQueryParams,
   CreateAppointmentBody,
@@ -9,6 +9,10 @@ import {
   UpdateAppointmentBody,
 } from "@workspace/api-zod";
 import { requireAdmin } from "./admin";
+import {
+  notifyAppointmentApproved,
+  notifyAppointmentRejected,
+} from "../lib/notifications";
 
 const router: IRouter = Router();
 
@@ -85,8 +89,8 @@ router.post("/appointments", async (req, res): Promise<void> => {
       physiotherapist: parsed.data.physiotherapist ?? null,
       notes: parsed.data.notes ?? null,
       preferredDate: parsed.data.preferredDate ?? null,
-      preferredTimeOfDay: parsed.data.preferredTimeOfDay ?? null,
       reason: parsed.data.reason ?? null,
+      sessionMode: parsed.data.sessionMode ?? null,
       sessionDate: null,
       sessionTime: null,
       status: "pending",
@@ -158,6 +162,11 @@ router.patch("/appointments/:id", async (req, res): Promise<void> => {
   if (parsed.data.sessionTime !== undefined) updateData.sessionTime = parsed.data.sessionTime;
   if (parsed.data.rejectionReason !== undefined) updateData.rejectionReason = parsed.data.rejectionReason;
 
+  const [previous] = await db
+    .select()
+    .from(appointmentsTable)
+    .where(eq(appointmentsTable.id, params.data.id));
+
   const [appointment] = await db
     .update(appointmentsTable)
     .set(updateData)
@@ -167,6 +176,42 @@ router.patch("/appointments/:id", async (req, res): Promise<void> => {
   if (!appointment) {
     res.status(404).json({ error: "Appointment not found" });
     return;
+  }
+
+  // Notify patient when admin transitions status to confirmed or rejected.
+  const newStatus = appointment.status;
+  const statusChanged = previous?.status !== newStatus;
+  if (statusChanged && (newStatus === "confirmed" || newStatus === "rejected")) {
+    const [patient] = await db
+      .select()
+      .from(patientsTable)
+      .where(eq(patientsTable.id, appointment.patientId));
+    if (patient) {
+      const notice = {
+        patientName: appointment.patientName,
+        serviceType: appointment.serviceType,
+        sessionMode: appointment.sessionMode,
+        sessionDate: appointment.sessionDate,
+        sessionTime: appointment.sessionTime,
+        sessionLink: appointment.sessionLink,
+        physiotherapist: appointment.physiotherapist,
+        rejectionReason: appointment.rejectionReason,
+        notes: appointment.notes,
+      };
+      const recipient = {
+        name: patient.name,
+        email: patient.email,
+        phone: patient.phone,
+      };
+      // Fire-and-forget so the API response isn't blocked by network IO.
+      const sender =
+        newStatus === "confirmed"
+          ? notifyAppointmentApproved(recipient, notice)
+          : notifyAppointmentRejected(recipient, notice);
+      sender.catch((err) =>
+        console.error("[appointments] notification failed:", err),
+      );
+    }
   }
 
   res.json(serializeAppointment(appointment));

@@ -46,11 +46,19 @@ Patient login/signup uses an HMAC-signed bearer token (custom, no JWT lib).
 
 Patients **request** appointments — they don't pick a fixed date/time themselves. The admin reviews each request and either approves it (with a confirmed date, time, and video link) or rejects it (with an optional reason).
 
-- DB columns on `appointments` (see `lib/db/src/schema/appointments.ts`): `session_date` and `session_time` are nullable until approved. `preferred_date`, `preferred_time_of_day`, `reason`, and `rejection_reason` are new optional fields.
+- DB columns on `appointments` (see `lib/db/src/schema/appointments.ts`): `session_date` and `session_time` are nullable until approved. Optional fields: `preferred_date`, `reason`, `session_mode` (`"online"` | `"in-person"`), `rejection_reason`.
 - Status enum: `pending` → `confirmed` (approved) | `rejected` → optionally `completed`/`cancelled`. The dashboard displays "confirmed" as **Approved**.
-- `POST /api/appointments` always creates a `pending` request — it ignores any client-supplied date/time.
+- `POST /api/appointments` always creates a `pending` request — it ignores any client-supplied date/time. Patients choose a **session mode** (online video session or in-person clinic visit) but never a time slot.
 - `PATCH /api/appointments/{id}` requires an admin bearer token if it touches any of: `status`, `sessionLink`, `physiotherapist`, `sessionDate`, `sessionTime`, `rejectionReason`, `notes`.
-- Patient pages `/book` (multi-step) and `/dashboard` (sidebar form) submit a request with optional `preferredDate`, `preferredTimeOfDay`, `reason`. The dashboard shows the approved schedule + video link or a rejection reason once the admin acts.
+- Patient pages `/book` (multi-step: Service → Mode → Specialist → Details → Confirm) and `/dashboard` (sidebar form) submit a request with optional `preferredDate`, `sessionMode`, `reason`. The dashboard shows the approved schedule + video link (online) or clinic confirmation (in-person), or a rejection reason once the admin acts.
+
+## Notifications (email + SMS)
+
+When an admin approves or rejects an appointment, the API fires a fire-and-forget email + SMS to the patient (`artifacts/api-server/src/lib/notifications.ts`).
+
+- Email uses **Nodemailer** over SMTP. Required env vars: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`. Optional: `SITE_NAME` (defaults to `TelePhysio`).
+- SMS uses **Twilio**. Required env vars: `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER`.
+- If credentials for a channel aren't set, that channel is **skipped** (logged to console with `[notifications] email/sms skipped (… not configured)`) — the admin action still succeeds. This makes development safe with no external dependencies; production needs both sets of secrets.
 
 ## Admin panel
 

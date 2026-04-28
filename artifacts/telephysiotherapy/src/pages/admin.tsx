@@ -24,7 +24,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
 import {
   Calendar,
-  Clock,
   CheckCircle2,
   XCircle,
   ShieldCheck,
@@ -51,8 +50,8 @@ interface AdminAppointment {
   physiotherapist: string | null;
   notes: string | null;
   preferredDate: string | null;
-  preferredTimeOfDay: string | null;
   reason: string | null;
+  sessionMode: string | null;
   rejectionReason: string | null;
   createdAt: string;
 }
@@ -320,16 +319,16 @@ export default function Admin() {
           </div>
         )}
 
-        {(appt.preferredDate || appt.preferredTimeOfDay) && appt.status === "pending" && (
+        {(appt.preferredDate || appt.sessionMode) && appt.status === "pending" && (
           <div className="text-xs text-muted-foreground mb-3 flex flex-wrap gap-x-4 gap-y-1">
             {appt.preferredDate && (
               <span className="flex items-center gap-1.5">
                 <Calendar className="w-3 h-3" /> Prefers {appt.preferredDate}
               </span>
             )}
-            {appt.preferredTimeOfDay && (
-              <span className="flex items-center gap-1.5">
-                <Clock className="w-3 h-3" /> {appt.preferredTimeOfDay}
+            {appt.sessionMode && (
+              <span className="inline-flex items-center gap-1.5 capitalize bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">
+                {appt.sessionMode === "in-person" ? "In-person" : "Online"}
               </span>
             )}
           </div>
@@ -595,10 +594,17 @@ export default function Admin() {
                 <p className="text-xs text-muted-foreground mt-0.5">
                   {approveDialog.serviceType} · {approveDialog.duration} min
                 </p>
-                {(approveDialog.preferredDate || approveDialog.preferredTimeOfDay) && (
+                {(approveDialog.preferredDate || approveDialog.sessionMode) && (
                   <p className="text-xs text-muted-foreground mt-1.5">
                     Patient prefers:{" "}
-                    {[approveDialog.preferredDate, approveDialog.preferredTimeOfDay]
+                    {[
+                      approveDialog.preferredDate,
+                      approveDialog.sessionMode === "in-person"
+                        ? "In-person"
+                        : approveDialog.sessionMode === "online"
+                          ? "Online"
+                          : null,
+                    ]
                       .filter(Boolean)
                       .join(" · ")}
                   </p>

@@ -18,6 +18,7 @@ import { CheckCircle2, Shield, IndianRupee, Lock } from "lucide-react";
 const FEE_OPTIONS = [
   { label: "Standard Online Consultation — ₹500 / session", value: "₹500" },
   { label: "Extended Online Consultation (60 min) — ₹800 / session", value: "₹800" },
+  { label: "In-Person Clinic Consultation — ₹700 / session", value: "₹700" },
   { label: "Follow-up Session — ₹300 / session", value: "₹300" },
 ];
 
