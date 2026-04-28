@@ -67,12 +67,6 @@ export default function Services() {
                       <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
                         <CheckCircle2 className="w-6 h-6 text-primary" />
                       </div>
-                      {service.duration && (
-                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                          <Clock className="w-3 h-3" />
-                          {service.duration}
-                        </div>
-                      )}
                     </div>
                     <h3 className="text-lg font-semibold text-foreground mb-3">{service.name}</h3>
                     <p className="text-muted-foreground text-sm leading-relaxed flex-1">{service.description}</p>
@@ -137,11 +131,6 @@ export default function Services() {
                       <div className="flex items-center gap-2 mb-2">
                         <Monitor className="w-5 h-5 text-primary" />
                         <h3 className="font-semibold text-foreground">{service.name}</h3>
-                        {service.duration && (
-                          <span className="ml-auto text-xs text-muted-foreground flex items-center gap-1">
-                            <Clock className="w-3 h-3" /> {service.duration}
-                          </span>
-                        )}
                       </div>
                       <p className="text-muted-foreground text-sm leading-relaxed">{service.description}</p>
                     </div>

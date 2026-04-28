@@ -360,9 +360,6 @@ export default function Book() {
                       </div>
                       <div className="text-right shrink-0">
                         <p className="text-sm font-bold text-primary">{svc.fee}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {svc.duration} min
-                        </p>
                       </div>
                     </div>
                   </button>
@@ -525,28 +522,6 @@ export default function Book() {
                     Our scheduler will pick the time that works best within clinic
                     hours and confirm it with you.
                   </p>
-                </div>
-
-                <div>
-                  <Label className="mb-1.5 block text-sm font-medium">
-                    Session Duration
-                  </Label>
-                  <Select
-                    value={String(request.duration)}
-                    onValueChange={(v) =>
-                      setRequest((r) => ({ ...r, duration: parseInt(v) }))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="30">30 minutes</SelectItem>
-                      <SelectItem value="45">45 minutes</SelectItem>
-                      <SelectItem value="60">60 minutes</SelectItem>
-                      <SelectItem value="90">90 minutes</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
 
                 <div>

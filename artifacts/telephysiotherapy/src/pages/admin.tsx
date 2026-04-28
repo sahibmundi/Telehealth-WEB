@@ -298,7 +298,7 @@ export default function Admin() {
               {appt.patientName}
             </p>
             <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
-              <Stethoscope className="w-3 h-3" /> {appt.serviceType} · {appt.duration} min
+              <Stethoscope className="w-3 h-3" /> {appt.serviceType}
             </p>
           </div>
           <span
@@ -592,7 +592,7 @@ export default function Admin() {
               <div className="bg-muted rounded-lg p-3 text-sm">
                 <p className="font-semibold text-foreground">{approveDialog.patientName}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  {approveDialog.serviceType} · {approveDialog.duration} min
+                  {approveDialog.serviceType}
                 </p>
                 {(approveDialog.preferredDate || approveDialog.sessionMode) && (
                   <p className="text-xs text-muted-foreground mt-1.5">

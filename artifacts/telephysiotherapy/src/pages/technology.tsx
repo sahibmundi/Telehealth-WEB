@@ -52,9 +52,6 @@ export default function Technology() {
                         ))}
                       </ul>
                     )}
-                    {service.duration && (
-                      <p className="text-xs text-primary font-medium mt-4">Session: {service.duration}</p>
-                    )}
                   </div>
                 ))}
           </div>

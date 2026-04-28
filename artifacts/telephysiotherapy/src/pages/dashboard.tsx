@@ -483,7 +483,7 @@ export default function Dashboard() {
                           <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                             <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {appt.sessionDate}</span>
                             <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {appt.sessionTime}</span>
-                            <span className="flex items-center gap-1"><Activity className="w-3 h-3" /> {appt.duration} min</span>
+
                           </div>
                         ) : (
                           <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
@@ -495,7 +495,7 @@ export default function Dashboard() {
                                 {appt.sessionMode === "in-person" ? "In-person" : "Online"}
                               </span>
                             )}
-                            <span className="flex items-center gap-1"><Activity className="w-3 h-3" /> {appt.duration} min</span>
+
                           </div>
                         )}
                         {appt.reason && (
@@ -586,18 +586,6 @@ export default function Dashboard() {
                       <p className="text-[11px] text-muted-foreground mt-1.5">
                         Our care team will pick the best time within clinic hours and confirm with you.
                       </p>
-                    </div>
-                    <div>
-                      <Label className="mb-1.5 block text-sm font-medium">Session Duration</Label>
-                      <Select value={String(apptForm.duration)} onValueChange={(v) => setApptForm(f => ({ ...f, duration: parseInt(v) }))}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="30">30 minutes</SelectItem>
-                          <SelectItem value="45">45 minutes</SelectItem>
-                          <SelectItem value="60">60 minutes</SelectItem>
-                          <SelectItem value="90">90 minutes</SelectItem>
-                        </SelectContent>
-                      </Select>
                     </div>
                     <div>
                       <Label className="mb-1.5 block text-sm font-medium">What would you like help with?</Label>
